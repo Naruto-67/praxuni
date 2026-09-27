@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Praxuni - Free tools for everyday digital work. Convert, edit, calculate, and process files quickly right in your browser.">
+  <title>Praxuni — Free tools for everyday digital work.</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+  <!-- Navigation Header -->
+  <header class="header">
+    <div class="container nav-content">
+      <div class="brand">
+        <a href="/" class="brand-link">
+          <span class="brand-logo">⚡</span>
+          <span class="brand-name">Praxuni</span>
+        </a>
+      </div>
+
+      <div class="header-actions">
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="categorySearch" placeholder="Search categories & tools..." aria-label="Search categories">
+        </div>
+        <div id="serviceStatus" class="status-badge checking" title="Worker Health Endpoint">
+          <span class="status-dot"></span>
+          <span class="status-label">Checking service...</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main>
+    <section class="hero">
+      <div class="container hero-content">
+        <div class="hero-badge">Production Ready • Cloudflare Edge</div>
+        <h1 class="hero-title">Praxuni</h1>
+        <p class="hero-tagline">Free tools for everyday digital work.</p>
+        <p class="hero-description">
+          Fast, browser-based utilities for files, conversions, formatting, and everyday tasks. 
+          No account needed, no paywalls, completely free.
+        </p>
+      </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Explore Tool Categories</h2>
+          <p class="section-subtitle">Select a category to view upcoming and available utilities</p>
+        </div>
+
+        <div class="categories-grid" id="categoriesGrid">
+          <!-- 1. Images -->
+          <article class="category-card" data-category="images">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Images</h3>
+              <p class="card-text">Compress, resize, convert, crop, and optimize photos and graphics.</p>
+              <div class="tool-tags">
+                <span class="tag">Compressor</span>
+                <span class="tag">Resizer</span>
+                <span class="tag">WebP / PNG</span>
+                <span class="tag">Crop</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 2. PDF -->
+          <article class="category-card" data-category="pdf">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">PDF</h3>
+              <p class="card-text">Merge, split, compress, protect, and convert documents with ease.</p>
+              <div class="tool-tags">
+                <span class="tag">Merge</span>
+                <span class="tag">Split</span>
+                <span class="tag">Compress</span>
+                <span class="tag">PDF to Word</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 3. Video -->
+          <article class="category-card" data-category="video">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+              </svg>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Video</h3>
+              <p class="card-text">Trim clips, compress file sizes, convert formats, and extract audio tracks.</p>
+              <div class="tool-tags">
+                <span class="tag">Trimmer</span>
+                <span class="tag">MP4 Converter</span>
+                <span class="tag">Compressor</span>
+                <span class="tag">Audio Extract</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 4. Audio -->
+          <article class="category-card" data-category="audio">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                <path d="M9 18V5l12-2v13"></path>
+                <circle cx="6" cy="18" r="3"></circle>
+                <circle cx="18" cy="16" r="3"></circle>
+              </svg>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Audio</h3>
+              <p class="card-text">Cut sound clips, convert bitrates and formats, join tracks, and normalize volume.</p>
+              <div class="tool-tags">
+                <span class="tag">Audio Cutter</span>
+                <span class="tag">MP3 / WAV</span>
+                <span class="tag">Joiner</span>
+                <span class="tag">Volume</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 5. Text -->
+          <article class="category-card" data-category="text">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                <line x1="9" y1="20" x2="15" y2="20"></line>
+                <line x1="12" y1="4" x2="12" y2="20"></line>
+              </svg>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Text</h3>
+              <p class="card-text">Diff comparator, case converter, word and character counters, and slug generators.</p>
+              <div class="tool-tags">
+                <span class="tag">Diff Checker</span>
+                <span class="tag">Case Converter</span>
+                <span class="tag">Word Counter</span>
+                <span class="tag">Slugify</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 6. Developer -->
+          <article class="category-card" data-category="developer">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Developer</h3>
+              <p class="card-text">JSON formatters, Base64 enc/dec, RegEx testers, JWT decoders, and hash generators.</p>
+              <div class="tool-tags">
+                <span class="tag">JSON Formatter</span>
+                <span class="tag">Base64</span>
+                <span class="tag">JWT Decoder</span>
+                <span class="tag">RegEx Tester</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 7. Calculators -->
+          <article class="category-card" data-category="calculators">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+                <line x1="8" y1="6" x2="16" y2="6"></line>
+                <line x1="16" y1="14" x2="16" y2="18"></line>
+                <path d="M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M8 18h.01M12 18h.01"></path>
+              </svg>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Calculators</h3>
+              <p class="card-text">Percentages, discount calculators, unit conversions, age, and loan estimates.</p>
+              <div class="tool-tags">
+                <span class="tag">Percentage</span>
+                <span class="tag">Discount</span>
+                <span class="tag">Unit Converter</span>
+                <span class="tag">Loan EMI</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 8. QR & Links -->
+          <article class="category-card" data-category="qr & links">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+              </svg>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">QR & Links</h3>
+              <p class="card-text">Create custom QR codes, generate tracking links, and manage UTM parameters.</p>
+              <div class="tool-tags">
+                <span class="tag">QR Generator</span>
+                <span class="tag">UTM Builder</span>
+                <span class="tag">Link Shortener</span>
+                <span class="tag">Barcode</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 9. SEO -->
+          <article class="category-card" data-category="seo">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">SEO</h3>
+              <p class="card-text">Meta tag analyzers, robots.txt builders, sitemap generators, and keyword density.</p>
+              <div class="tool-tags">
+                <span class="tag">Meta Tags</span>
+                <span class="tag">Robots.txt</span>
+                <span class="tag">Keyword Density</span>
+                <span class="tag">Sitemap</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 10. Government & Forms -->
+          <article class="category-card" data-category="government & forms">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                <path d="M9 14l2 2 4-4"></path>
+              </svg>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Government & Forms</h3>
+              <p class="card-text">Photo dimension resizers, signature size reducers, and date calculators for portals.</p>
+              <div class="tool-tags">
+                <span class="tag">Photo Resizer</span>
+                <span class="tag">Signature Reducer</span>
+                <span class="tag">Age Eligibility</span>
+                <span class="tag">KB Reducer</span>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div id="noResults" class="no-results hidden">
+          <p>No categories found matching your search.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-left">
+        <p class="copyright">© 2026 Praxuni</p>
+      </div>
+      <div class="footer-right">
+        <span class="footer-tag">Free & Open Utilities</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "praxuni",
+  "version": "1.0.0",
+  "description": "Free tools for everyday digital work.",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "wrangler dev",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.141.0"
+  },
+  "private": true
+}
