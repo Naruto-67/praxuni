@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Free online image compressor. Compress JPG, PNG, and WebP images directly in your browser with adjustable quality, target file sizes, and before/after comparison. No server uploads.">
+  <title>Image Compressor – Compress JPG, PNG &amp; WebP Online | Praxuni</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/tools/image-compressor/image-compressor.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+
+  <!-- Structured Data: WebApplication & FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Praxuni Image Compressor",
+        "url": "https://praxuni.com/tools/image-compressor",
+        "description": "Free, browser-based image compression tool for JPG, PNG, and WebP images with target file size matching.",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "All",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do I compress an image?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Upload or drag your JPG, PNG, or WebP images into the tool, select your desired quality or target file size, and click Compress. You can then preview the savings and download your optimized images individually or in a ZIP file."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does image compression reduce quality?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Lossy formats like JPEG and WebP discard imperceptible image data to achieve significant file size reductions. With Praxuni's balanced settings (75-85% quality), visual differences are virtually indistinguishable to the human eye while saving 50% to 80% in file size."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are my images uploaded to Praxuni?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Your images are processed entirely within your browser using local canvas and blob APIs. Your files are never transmitted to Praxuni's servers or any third party."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I compress an image to 100 KB or 50 KB?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Enable the 'Target file size' feature in the settings panel and select 100 KB or 50 KB (or type a custom value). The tool uses an iterative binary search algorithm to calibrate quality to reach your target size."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container nav-content">
+      <div class="brand">
+        <a href="/" class="brand-link" title="Praxuni Home">
+          <span class="brand-logo">⚡</span>
+          <span class="brand-name">Praxuni</span>
+        </a>
+        <span class="nav-divider">/</span>
+        <span class="nav-tool-title">Image Compressor</span>
+      </div>
+
+      <div class="header-actions">
+        <a href="/" class="nav-back-link">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>All Tools</span>
+        </a>
+        <div id="serviceStatus" class="status-badge checking" title="Worker Health Endpoint">
+          <span class="status-dot"></span>
+          <span class="status-label">Worker: Checking...</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="tool-hero">
+      <div class="container">
+        <div class="hero-badge">Browser-First Utility</div>
+        <h1 class="tool-title">Compress Images Online</h1>
+        <p class="tool-subtitle">
+          Reduce the file size of your JPG, PNG, and WebP images right in your browser. 
+          Fast, private, and free — your files are processed locally and never uploaded to our servers.
+        </p>
+        <div class="privacy-pill">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>100% Client-Side Processing • Files never leave your device</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Tool Container -->
+    <section class="tool-workspace-section">
+      <div class="container">
+        <!-- Error / Notification Banner -->
+        <div id="alertBanner" class="alert-banner hidden" role="alert" aria-live="polite">
+          <div class="alert-content">
+            <span class="alert-icon">⚠️</span>
+            <span id="alertMessage" class="alert-text"></span>
+          </div>
+          <button type="button" id="alertDismissBtn" class="alert-dismiss" aria-label="Dismiss alert">&times;</button>
+        </div>
+
+        <!-- Initial Upload Area (Empty State) -->
+        <div id="uploadDropzone" class="upload-dropzone" tabindex="0" role="button" aria-label="Upload images for compression" data-action="upload-zone">
+          <input type="file" id="fileInput" multiple accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" class="file-input-hidden" aria-hidden="true">
+          <div class="dropzone-inner">
+            <div class="dropzone-icon">
+              <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1.8" fill="none">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <h2 class="dropzone-title">Drop your images here, or <span class="highlight">browse</span></h2>
+            <p class="dropzone-hint">Supports JPG, PNG, and WebP • Up to 50MB per file • Batch processing</p>
+            <button type="button" id="selectFilesBtn" class="btn btn-primary dropzone-btn">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+              Choose Images
+            </button>
+          </div>
+        </div>
+
+        <!-- Active Workspace (Visible once images are loaded) -->
+        <div id="workspaceArea" class="workspace-area hidden">
+          <!-- Workspace Header Toolbar -->
+          <div class="workspace-toolbar">
+            <div class="toolbar-left">
+              <span id="queueCounter" class="queue-counter">0 images selected</span>
+              <span id="savingsSummary" class="savings-summary hidden">Saved 0 KB (0%)</span>
+            </div>
+            <div class="toolbar-actions">
+              <button type="button" id="addMoreBtn" class="btn btn-outline btn-sm" title="Add more images to queue">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Add More
+              </button>
+              <button type="button" id="clearAllBtn" class="btn btn-ghost btn-sm" title="Clear all images">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                Clear All
+              </button>
+              <button type="button" id="compressAllBtn" class="btn btn-primary btn-sm" data-action="compress-all">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+                Compress All
+              </button>
+              <button type="button" id="downloadAllBtn" class="btn btn-success btn-sm hidden" data-action="download-all" title="Download all compressed images as a ZIP file">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download All (ZIP)
+              </button>
+            </div>
+          </div>
+
+          <!-- Workspace Grid: Queue (left) + Settings (right) -->
+          <div class="workspace-grid">
+            <!-- Left: Image Cards List -->
+            <div class="queue-container">
+              <div id="cardsList" class="cards-list" role="list">
+                <!-- Dynamically populated image cards -->
+              </div>
+            </div>
+
+            <!-- Right: Settings Panel -->
+            <aside class="settings-sidebar">
+              <div class="settings-card">
+                <div class="settings-header">
+                  <h3 class="settings-title">Compression Settings</h3>
+                  <button type="button" id="resetSettingsBtn" class="btn-text-sm" title="Reset to default settings">Reset</button>
+                </div>
+
+                <!-- Mode Selector -->
+                <div class="form-group">
+                  <label class="form-label" id="modeGroupLabel">Compression Mode</label>
+                  <div class="mode-pills" role="radiogroup" aria-labelledby="modeGroupLabel">
+                    <button type="button" class="mode-pill active" data-mode="balanced" role="radio" aria-checked="true">
+                      <span class="mode-pill-title">Balanced</span>
+                      <span class="mode-pill-desc">~80% Quality</span>
+                    </button>
+                    <button type="button" class="mode-pill" data-mode="smaller" role="radio" aria-checked="false">
+                      <span class="mode-pill-title">Smaller File</span>
+                      <span class="mode-pill-desc">~65% Quality</span>
+                    </button>
+                    <button type="button" class="mode-pill" data-mode="quality" role="radio" aria-checked="false">
+                      <span class="mode-pill-title">High Quality</span>
+                      <span class="mode-pill-desc">~90% Quality</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Quality Slider -->
+                <div class="form-group" id="qualityGroup">
+                  <div class="slider-header">
+                    <label for="qualitySlider" class="form-label">Quality</label>
+                    <span id="qualityValue" class="slider-value">80%</span>
+                  </div>
+                  <input type="range" id="qualitySlider" min="10" max="100" value="80" step="1" class="range-slider">
+                  <div class="slider-ticks">
+                    <span>10% (Smallest)</span>
+                    <span>100% (Lossless / Max)</span>
+                  </div>
+                </div>
+
+                <!-- Output Format -->
+                <div class="form-group">
+                  <label for="formatSelect" class="form-label">Output Format</label>
+                  <select id="formatSelect" class="form-select">
+                    <option value="auto" selected>Auto (Keep original format)</option>
+                    <option value="image/webp">WebP (Recommended — smaller & modern)</option>
+                    <option value="image/jpeg">JPEG (Best for standard photos)</option>
+                    <option value="image/png">PNG (Lossless & transparent)</option>
+                  </select>
+                  <div id="transparencyNotice" class="format-notice warning hidden">
+                    ⚠️ Converting transparent PNGs to JPEG fills transparent areas with white.
+                  </div>
+                </div>
+
+                <!-- Target File Size (Optional) -->
+                <div class="form-group target-size-group">
+                  <div class="checkbox-header">
+                    <label class="checkbox-label" for="targetSizeToggle">
+                      <input type="checkbox" id="targetSizeToggle" class="form-checkbox">
+                      <span class="checkbox-text">Target File Size <span class="badge-optional">Iterative</span></span>
+                    </label>
+                  </div>
+
+                  <div id="targetSizeOptions" class="target-size-options hidden">
+                    <p class="field-hint">Automatically calibrates compression to match your size requirement:</p>
+                    <div class="target-presets">
+                      <button type="button" class="preset-btn" data-target="20">20 KB</button>
+                      <button type="button" class="preset-btn" data-target="50">50 KB</button>
+                      <button type="button" class="preset-btn active" data-target="100">100 KB</button>
+                      <button type="button" class="preset-btn" data-target="200">200 KB</button>
+                      <button type="button" class="preset-btn" data-target="500">500 KB</button>
+                    </div>
+                    <div class="custom-target-row">
+                      <label for="customTargetInput" class="visually-hidden">Custom Target Size</label>
+                      <input type="number" id="customTargetInput" min="5" max="50000" value="100" class="form-input" placeholder="Size">
+                      <select id="customTargetUnit" class="form-select unit-select" aria-label="Target Size Unit">
+                        <option value="KB" selected>KB</option>
+                        <option value="MB">MB</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Advanced Settings (Collapsible) -->
+                <div class="advanced-section">
+                  <button type="button" id="advancedToggleBtn" class="advanced-toggle" aria-expanded="false" aria-controls="advancedContent">
+                    <span class="advanced-toggle-text">Advanced Settings</span>
+                    <svg class="chevron-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+
+                  <div id="advancedContent" class="advanced-content hidden">
+                    <div class="form-group">
+                      <label class="checkbox-label" for="preserveDimensions">
+                        <input type="checkbox" id="preserveDimensions" checked class="form-checkbox">
+                        <span class="checkbox-text">Preserve original dimensions</span>
+                      </label>
+                    </div>
+
+                    <div id="dimensionInputs" class="dimensions-row hidden">
+                      <div class="dim-col">
+                        <label for="maxWidthInput" class="dim-label">Max Width (px)</label>
+                        <input type="number" id="maxWidthInput" placeholder="Auto" min="50" max="10000" class="form-input">
+                      </div>
+                      <div class="dim-col">
+                        <label for="maxHeightInput" class="dim-label">Max Height (px)</label>
+                        <input type="number" id="maxHeightInput" placeholder="Auto" min="50" max="10000" class="form-input">
+                      </div>
+                    </div>
+
+                    <div class="metadata-info-note">
+                      <div class="note-header">
+                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="12" y1="16" x2="12" y2="12"></line>
+                          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <span>EXIF &amp; Metadata Privacy</span>
+                      </div>
+                      <p class="note-text">Browser-based canvas re-encoding creates a new output image and does not retain original EXIF camera metadata, GPS location, or device tags.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Action Button in Sidebar -->
+                <div class="sidebar-action">
+                  <button type="button" id="applySettingsBtn" class="btn btn-primary btn-block">
+                    Apply &amp; Re-compress
+                  </button>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <!-- Before / After Interactive Comparison Modal -->
+        <div id="compareModal" class="compare-modal hidden" role="dialog" aria-modal="true" aria-labelledby="compareTitle">
+          <div class="compare-backdrop" id="compareBackdrop"></div>
+          <div class="compare-dialog">
+            <div class="compare-header">
+              <div class="compare-meta">
+                <h3 id="compareTitle" class="compare-title">Image Comparison</h3>
+                <div class="compare-badges">
+                  <span id="compareOriginalBadge" class="meta-pill">Original: --</span>
+                  <span id="compareCompressedBadge" class="meta-pill success">Compressed: --</span>
+                  <span id="compareSavedBadge" class="meta-pill highlight">Saved: --</span>
+                </div>
+              </div>
+              <button type="button" id="compareCloseBtn" class="btn-icon" aria-label="Close comparison view">&times;</button>
+            </div>
+
+            <div class="compare-body">
+              <div class="comparison-container" id="comparisonContainer">
+                <img id="compareImgOriginal" class="compare-img original" alt="Original Image">
+                <div class="compare-overlay" id="compareOverlay">
+                  <img id="compareImgCompressed" class="compare-img compressed" alt="Compressed Image">
+                </div>
+                <div class="compare-handle" id="compareHandle" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" aria-label="Comparison slider">
+                  <div class="handle-line"></div>
+                  <div class="handle-thumb">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                      <path d="M8 5v14l-6-7 6-7zm8 0l6 7-6 7V5z"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="compare-label before-label">Original</span>
+                <span class="compare-label after-label">Compressed</span>
+              </div>
+            </div>
+
+            <div class="compare-footer">
+              <div class="compare-dim-info">
+                <span id="compareDimensions">Dimensions: --</span>
+                <span class="dot-sep">•</span>
+                <span id="compareFormat">Format: --</span>
+              </div>
+              <button type="button" id="compareDownloadBtn" class="btn btn-primary btn-sm">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download This Image
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEO / Informational Sections -->
+    <section class="info-section">
+      <div class="container">
+        <!-- How to Compress -->
+        <div class="info-block">
+          <h2 class="info-heading">How to Compress an Image</h2>
+          <div class="steps-grid">
+            <div class="step-card">
+              <div class="step-number">1</div>
+              <h3 class="step-title">Select or Drop Images</h3>
+              <p class="step-text">Choose one or multiple JPG, PNG, or WebP files from your phone, tablet, or computer.</p>
+            </div>
+            <div class="step-card">
+              <div class="step-number">2</div>
+              <h3 class="step-title">Customize Settings</h3>
+              <p class="step-text">Pick between Balanced, Smaller File, or High Quality. You can also specify an exact target size like 50 KB or 100 KB.</p>
+            </div>
+            <div class="step-card">
+              <div class="step-number">3</div>
+              <h3 class="step-title">Compare &amp; Download</h3>
+              <p class="step-text">Inspect the before/after preview, view exact byte savings, and download single files or an entire batch ZIP.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Supported Formats -->
+        <div class="info-block">
+          <h2 class="info-heading">Supported Image Formats</h2>
+          <div class="formats-grid">
+            <div class="format-card">
+              <div class="format-badge">JPG / JPEG</div>
+              <h3 class="format-title">Photographs &amp; Complex Graphics</h3>
+              <p class="format-text">Standard photography format with lossy DCT encoding. Highly compressible with excellent size-to-quality ratio. Does not support transparency.</p>
+            </div>
+            <div class="format-card">
+              <div class="format-badge">WebP</div>
+              <h3 class="format-title">Modern Web Standard</h3>
+              <p class="format-text">Next-gen Google format offering 25–35% smaller file sizes than comparable JPEGs while supporting both lossy compression and full alpha transparency.</p>
+            </div>
+            <div class="format-card">
+              <div class="format-badge">PNG</div>
+              <h3 class="format-title">Logos &amp; Transparent Graphics</h3>
+              <p class="format-text">Lossless raster format preserving crisp lines, text, and transparent layers. Converting high-resolution PNG photos to WebP can yield up to 80% reduction.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- How Compression Works -->
+        <div class="info-block">
+          <h2 class="info-heading">How Image Compression Works in Praxuni</h2>
+          <div class="prose-content">
+            <p>
+              Traditional online image compressors require you to upload your personal photos and documents to remote servers, wait for server-side processing queues, and download them back.
+            </p>
+            <p>
+              <strong>Praxuni takes a modern, browser-first approach.</strong> Utilizing the browser's hardware-accelerated <code>Canvas</code> and <code>createImageBitmap</code> APIs, images are decoded, scaled, stripped of unnecessary EXIF metadata, and re-encoded directly in your browser's memory. This delivers instant processing speeds and complete privacy, as your files never leave your device.
+            </p>
+          </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="info-block">
+          <h2 class="info-heading">Frequently Asked Questions</h2>
+          <div class="faq-list">
+            <details class="faq-item" open>
+              <summary class="faq-question">How do I compress an image?</summary>
+              <div class="faq-answer">
+                <p>Drag and drop your files into the upload box or click "Choose Images". Select your compression mode or enter a target file size, then download the compressed files once processing completes.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-question">Does image compression reduce quality?</summary>
+              <div class="faq-answer">
+                <p>Lossy compression (JPEG and lossy WebP) achieves smaller file sizes by discarding subtle color and frequency details that human eyes generally cannot distinguish. At Praxuni's default 80% quality level, the output image looks virtually identical to the original.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-question">Can I compress JPG images?</summary>
+              <div class="faq-answer">
+                <p>Yes. JPG images are natively supported. You can re-encode them at varying quality levels, reduce resolution dimensions, or convert them into WebP for even greater compression.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-question">Can I compress PNG images?</summary>
+              <div class="faq-answer">
+                <p>Yes. Because standard PNG is lossless, browser encoders do not support lossy PNG compression directly without color palette quantization. For maximum savings while preserving transparency, Praxuni recommends converting PNGs to WebP.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-question">Can I compress WebP images?</summary>
+              <div class="faq-answer">
+                <p>Yes. WebP images can be compressed directly to smaller WebP files or converted to JPEG where required.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-question">How do I compress an image to 100 KB or 50 KB?</summary>
+              <div class="faq-answer">
+                <p>Check the "Target File Size" option in the settings panel and click the 100 KB or 50 KB preset (or type a custom size). The tool uses an iterative binary search algorithm to find the exact quality level that brings the image down to your target.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-question">Why couldn't my image reach the target size?</summary>
+              <div class="faq-answer">
+                <p>If an image is very large or complex (e.g. a 24-megapixel photograph), reaching an aggressive target like 20 KB may be mathematically impossible without downscaling pixel dimensions. If you enable downscaling in Advanced Settings or convert PNG to WebP, smaller targets become achievable.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-question">Are my images uploaded to Praxuni?</summary>
+              <div class="faq-answer">
+                <p>No. Your images are processed entirely within your web browser using HTML5 Canvas and Blob APIs. No image data is ever uploaded to our servers or stored remotely.</p>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <!-- Related Tools (Currently only linking to existing tools/home) -->
+        <div class="info-block">
+          <h2 class="info-heading">Explore Praxuni Tools</h2>
+          <p class="section-subtitle">More free digital tools powered by client-side edge computing</p>
+          <div class="related-tools-grid">
+            <a href="/" class="related-card">
+              <div class="related-icon">⚡</div>
+              <div class="related-body">
+                <h3 class="related-title">Praxuni Tools Directory</h3>
+                <p class="related-desc">Explore PDF, developer utilities, text analyzers, and unit calculators on the home directory.</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-left">
+        <p class="copyright">© 2026 Praxuni</p>
+      </div>
+      <div class="footer-right">
+        <span class="footer-tag">Free &amp; Open Utilities • Browser-Processed</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/tools/image-compressor/image-compressor.js"></script>
+</body>
+</html>

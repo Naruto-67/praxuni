@@ -59,7 +59,7 @@
 
         <div class="categories-grid" id="categoriesGrid">
           <!-- 1. Images -->
-          <article class="category-card" data-category="images">
+          <a href="/tools/image-compressor" class="category-card" data-category="images" title="Open Image Compressor">
             <div class="card-icon">
               <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -68,16 +68,19 @@
               </svg>
             </div>
             <div class="card-body">
-              <h3 class="card-title">Images</h3>
+              <div class="card-title-wrap">
+                <h3 class="card-title">Images</h3>
+                <span class="badge-live">Live Tool</span>
+              </div>
               <p class="card-text">Compress, resize, convert, crop, and optimize photos and graphics.</p>
               <div class="tool-tags">
-                <span class="tag">Compressor</span>
+                <span class="tag tag-active">Compressor (Live)</span>
                 <span class="tag">Resizer</span>
                 <span class="tag">WebP / PNG</span>
                 <span class="tag">Crop</span>
               </div>
             </div>
-          </article>
+          </a>
 
           <!-- 2. PDF -->
           <article class="category-card" data-category="pdf">

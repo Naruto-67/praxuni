@@ -285,6 +285,35 @@ main {
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+}
+
+.card-title-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.badge-live {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #34d399;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.tag-active {
+  background: rgba(56, 189, 248, 0.15) !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
+  color: var(--accent-primary) !important;
+  font-weight: 600;
 }
 
 .category-card:hover {
