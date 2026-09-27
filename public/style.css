@@ -118,6 +118,41 @@ body {
   gap: 1rem;
 }
 
+/* Breadcrumb & Navigation extensions */
+.nav-divider {
+  color: var(--text-muted);
+  font-weight: 300;
+  margin: 0 0.25rem;
+}
+
+.nav-tool-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.nav-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  transition: var(--transition);
+}
+
+.nav-back-link:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-primary);
+  background: var(--bg-surface-hover);
+}
+
+
 .search-box {
   position: relative;
   display: flex;
@@ -297,16 +332,76 @@ main {
   margin-bottom: 0.5rem;
 }
 
+/* Reusable Live Status Dot Indicator */
+.status-dot-live {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--status-ok, #10b981);
+  box-shadow: 0 0 7px rgba(16, 185, 129, 0.5);
+  display: inline-block;
+  flex-shrink: 0;
+  animation: live-dot-pulse 2.8s ease-in-out infinite;
+  vertical-align: middle;
+}
+
+.status-dot-live.inline-dot {
+  margin-left: 0.35rem;
+}
+
+@keyframes live-dot-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 7px rgba(16, 185, 129, 0.5);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.92);
+    box-shadow: 0 0 3px rgba(16, 185, 129, 0.25);
+  }
+}
+
+@media (max-width: 640px) {
+  .status-dot-live {
+    width: 8.5px;
+    height: 8.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-dot-live {
+    animation: none;
+  }
+}
+
+/* Screen reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 .badge-live {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.35);
-  color: #34d399;
-  padding: 0.15rem 0.5rem;
-  border-radius: 9999px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.category-card .badge-live {
+  position: absolute;
+  top: 1.35rem;
+  right: 1.35rem;
 }
 
 .tag-active {
@@ -314,6 +409,8 @@ main {
   border-color: rgba(56, 189, 248, 0.4) !important;
   color: var(--accent-primary) !important;
   font-weight: 600;
+  display: inline-flex;
+  align-items: center;
 }
 
 .category-card:hover {

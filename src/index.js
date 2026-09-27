@@ -51,6 +51,11 @@ export default {
       );
     }
 
+    // Redirect root / to /home/
+    if (url.pathname === "/" || url.pathname === "") {
+      return Response.redirect(new URL("/home/", request.url), 302);
+    }
+
     // Serve static assets
     return env.ASSETS.fetch(request);
   },
