@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Free online image resizer. Resize JPG, PNG, and WebP images by exact dimensions, percentage, or interactive 2D grid. Batch processing with 100% browser-based privacy.">
+  <title>Image Resizer – Resize JPG, PNG &amp; WebP Online Free | Praxuni</title>
+  <link rel="canonical" href="https://praxuni.com/tools/image/resize/">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/tools/image/resize/image-resizer.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+
+  <!-- Structured Data: WebApplication & FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Praxuni Image Resizer",
+        "url": "https://praxuni.com/tools/image/resize/",
+        "description": "Free, browser-based image resizing tool with interactive 2D grid, batch processing, and exact dimension controls.",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "All",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does the 2D Resize Grid work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The 2D Resize Grid lets you visually drag a point on a coordinate plane where the X-axis controls width and the Y-axis controls height. With Aspect Ratio Lock enabled, moving the point scales both dimensions in perfect proportion."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are my images uploaded to any server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. All resizing and image processing takes place 100% client-side inside your web browser. Your images never leave your computer or phone."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I resize multiple images at once?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes! You can drop or select multiple JPG, PNG, and WebP images. Praxuni will apply your chosen resize mode to all images in batch and allow you to download them individually or as a single ZIP file."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between Fit Inside and Fill/Crop?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Fit Inside scales the image so it fits entirely within the specified width and height without cropping or stretching. Fill / Crop scales the image to completely cover the specified dimensions and crops equal parts from the edges."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container nav-content">
+      <div class="brand">
+        <a href="/home/" class="brand-link" title="Praxuni Home">
+          <span class="brand-logo">⚡</span>
+          <span class="brand-name">Praxuni</span>
+        </a>
+      </div>
+
+      <div class="header-actions">
+        <a href="/tools/image/" class="nav-back-link" title="Back to Image Tools">
+          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.5" fill="none" aria-hidden="true">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Image Hub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumbs -->
+  <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+    <div class="container">
+      <ol class="breadcrumbs">
+        <li><a href="/">Praxuni</a></li>
+        <li class="separator" aria-hidden="true">›</li>
+        <li><a href="/tools/">Tools</a></li>
+        <li class="separator" aria-hidden="true">›</li>
+        <li><a href="/tools/image/">Image</a></li>
+        <li class="separator" aria-hidden="true">›</li>
+        <li aria-current="page">Resize</li>
+      </ol>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Tool Hero Section -->
+    <section class="tool-hero">
+      <div class="container">
+        <div class="hero-badge">
+          <span class="status-dot-live" title="Status: Live" aria-hidden="true"></span>
+          <span>Browser-First Utility</span>
+        </div>
+        <h1 class="tool-title">Resize Images Online</h1>
+        <p class="tool-subtitle">
+          Change image dimensions, scale by percentage, or use our interactive 2D grid. 
+          Fast, private, and 100% processed in your browser with zero server uploads.
+        </p>
+        <div class="privacy-pill">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span class="privacy-text">
+            <span class="privacy-full">100% Client-Side Processing • Images never leave your device</span>
+            <span class="privacy-mobile">100% Client-Side • Zero Server Uploads</span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Workspace Section -->
+    <section class="tool-workspace-section">
+      <div class="container">
+
+        <!-- Error / Info Banner -->
+        <div id="alertBanner" class="alert-banner hidden" role="alert" aria-live="polite">
+          <div class="alert-content">
+            <span class="alert-icon">⚠️</span>
+            <span id="alertMessage" class="alert-text"></span>
+          </div>
+          <button type="button" id="alertDismissBtn" class="alert-dismiss" aria-label="Dismiss alert">&times;</button>
+        </div>
+
+        <!-- Warning Pill Banner (Upscaling or Aspect Alteration) -->
+        <div id="warningBanner" class="warning-banner hidden" role="alert" aria-live="polite">
+          <div class="warning-content">
+            <span class="warning-icon">ℹ️</span>
+            <span id="warningMessage" class="warning-text"></span>
+          </div>
+        </div>
+
+        <!-- Empty State Dropzone -->
+        <div id="uploadDropzone" class="upload-dropzone" tabindex="0" role="button" aria-label="Upload images for resizing">
+          <input type="file" id="fileInput" multiple accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" class="file-input-hidden" aria-hidden="true">
+          <div class="dropzone-inner">
+            <div class="dropzone-icon">
+              <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1.8" fill="none">
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <polyline points="9 21 3 21 3 15"></polyline>
+                <line x1="21" y1="3" x2="14" y2="10"></line>
+                <line x1="3" y1="21" x2="10" y2="14"></line>
+              </svg>
+            </div>
+            <h2 class="dropzone-title">Drop your images here, or <span class="highlight">browse</span></h2>
+            <p class="dropzone-hint">Supports JPG, PNG, and WebP • Single image or batch queue • 100% client-side</p>
+            <button type="button" id="selectFilesBtn" class="btn btn-primary dropzone-btn">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+              Choose Images
+            </button>
+          </div>
+        </div>
+
+        <!-- Active Workspace (Visible once images are loaded) -->
+        <div id="workspaceArea" class="workspace-area hidden">
+          <!-- Toolbar -->
+          <div class="workspace-toolbar">
+            <div class="toolbar-left">
+              <span id="batchSummary" class="batch-summary">1 image selected</span>
+              <span id="batchToast" class="batch-toast hidden">Settings applied</span>
+            </div>
+            <div class="toolbar-actions">
+              <button type="button" id="addMoreBtn" class="btn btn-outline btn-sm" title="Add more images to queue">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Add More
+              </button>
+              <button type="button" id="applyAllBtn" class="btn btn-outline btn-sm hidden" title="Apply active resize settings to all queued images">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                  <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                  <polyline points="9 11 12 14 22 4"></polyline>
+                </svg>
+                Apply to All
+              </button>
+              <button type="button" id="headerDownloadBtn" class="btn btn-success btn-sm hidden" title="Download resized image">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Download</span>
+              </button>
+              <button type="button" id="downloadAllZipBtn" class="btn btn-success btn-sm hidden" title="Download all resized images as a ZIP">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download All (ZIP)
+              </button>
+              <button type="button" id="clearAllBtn" class="btn btn-outline btn-sm btn-danger-outline" title="Clear all images">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                Clear
+              </button>
+            </div>
+          </div>
+
+          <!-- Main Layout Grid -->
+          <div class="workspace-grid">
+
+            <!-- Left Column: Preview, Meta, and Queue -->
+            <div class="workspace-col-left">
+
+              <!-- Preview Card -->
+              <div class="panel preview-card">
+                <div class="panel-header preview-header">
+                  <div class="view-mode-tabs" role="tablist" aria-label="Preview View Modes">
+                    <button type="button" class="tab-btn active" data-view="after" role="tab" aria-selected="true">Resized</button>
+                    <button type="button" class="tab-btn" data-view="before" role="tab" aria-selected="false">Original</button>
+                    <button type="button" class="tab-btn" data-view="split" role="tab" aria-selected="false">
+                      <span class="tab-label-full">Side-by-Side</span>
+                      <span class="tab-label-mobile">Split</span>
+                    </button>
+                  </div>
+                  <div class="zoom-controls" role="toolbar" aria-label="Zoom Controls">
+                    <button type="button" id="zoomOutBtn" class="zoom-btn zoom-btn-icon" title="Zoom Out" aria-label="Zoom Out">
+                      <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.2" fill="none">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                      </svg>
+                    </button>
+                    <button type="button" id="zoomFitBtn" class="zoom-btn active" title="Reset Zoom to 100%">100%</button>
+                    <button type="button" id="zoomInBtn" class="zoom-btn zoom-btn-icon" title="Zoom In" aria-label="Zoom In">
+                      <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.2" fill="none">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="preview-viewport-wrapper">
+                  <div id="previewViewport" class="preview-viewport checkerboard-pattern" tabindex="0" aria-label="Image Preview Area">
+                    <div id="previewCanvasContainer" class="preview-canvas-container">
+                      <canvas id="previewCanvas" class="preview-canvas" aria-label="Interactive Resized Image Preview"></canvas>
+                      <img id="originalPreviewImg" class="original-preview-img hidden" alt="Original Image Preview">
+                      <div id="splitComparisonContainer" class="split-comparison-container hidden">
+                        <div class="split-panes-wrapper">
+                          <div class="split-pane split-pane-before">
+                            <div class="split-pane-header">
+                              <span class="split-pane-label">Original</span>
+                              <span id="splitOrigDims" class="split-pane-meta">1920 × 1080 px</span>
+                            </div>
+                            <div class="split-stage">
+                              <div id="splitOrigWrapper" class="split-img-wrapper">
+                                <img id="splitOriginalImg" class="split-img" alt="Original Image">
+                              </div>
+                            </div>
+                          </div>
+                          <div class="split-pane split-pane-after">
+                            <div class="split-pane-header">
+                              <span class="split-pane-label">Resized</span>
+                              <div class="split-pane-meta-group">
+                                <span id="splitResizedDims" class="split-pane-meta">1920 × 1080 px</span>
+                                <span id="splitScaleBadge" class="split-diff-badge">100%</span>
+                              </div>
+                            </div>
+                            <div class="split-stage">
+                              <div id="splitResizedWrapper" class="split-img-wrapper">
+                                <img id="splitResizedImg" class="split-img hidden" alt="Resized Image">
+                                <canvas id="splitResizedCanvas" class="split-canvas"></canvas>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Floating Dimensions Pill on Preview -->
+                  <div id="previewDimensionTag" class="preview-dimension-tag">1920 × 1080 px</div>
+                </div>
+              </div>
+
+              <!-- Image Information & Comparison Card -->
+              <div class="panel meta-card">
+                <div class="panel-header">
+                  <h3 class="panel-title">Image Details</h3>
+                  <span id="activeImageName" class="active-image-name">image.jpg</span>
+                </div>
+                <div class="meta-grid">
+                  <div class="meta-col">
+                    <span class="meta-label">Original Dimensions</span>
+                    <span id="metaOrigDims" class="meta-value">-</span>
+                  </div>
+                  <div class="meta-col highlight-col">
+                    <span class="meta-label">New Dimensions</span>
+                    <span id="metaNewDims" class="meta-value highlight-val">-</span>
+                  </div>
+                  <div class="meta-col">
+                    <span class="meta-label">Original Aspect</span>
+                    <span id="metaOrigAspect" class="meta-value">-</span>
+                  </div>
+                  <div class="meta-col">
+                    <span class="meta-label">New Aspect</span>
+                    <span id="metaNewAspect" class="meta-value">-</span>
+                  </div>
+                  <div class="meta-col">
+                    <span class="meta-label">Original Size</span>
+                    <span id="metaOrigSize" class="meta-value">-</span>
+                  </div>
+                  <div class="meta-col highlight-col">
+                    <span class="meta-label">Output Est. Size</span>
+                    <span id="metaOutputSize" class="meta-value highlight-val">Calculating...</span>
+                  </div>
+                  <div class="meta-col">
+                    <span class="meta-label">Original MP</span>
+                    <span id="metaOrigMP" class="meta-value">-</span>
+                  </div>
+                  <div class="meta-col">
+                    <span class="meta-label">New MP</span>
+                    <span id="metaNewMP" class="meta-value">-</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Batch Queue Card -->
+              <div id="queueCard" class="panel queue-card">
+                <div class="panel-header">
+                  <h3 class="panel-title">Images in Queue (<span id="queueCount">0</span>)</h3>
+                  <span class="panel-hint">Click an image to edit/preview</span>
+                </div>
+                <div id="queueList" class="queue-list" role="list"></div>
+              </div>
+
+            </div>
+
+            <!-- Right Column: Settings & 2D Grid Panel -->
+            <div class="workspace-col-right">
+              <div class="panel controls-panel">
+                <div class="panel-header">
+                  <h3 class="panel-title">Resize Settings</h3>
+                  <button type="button" id="panelResetBtn" class="btn-reset" title="Reset settings to original">
+                    <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none">
+                      <polyline points="1 4 1 10 7 10"></polyline>
+                      <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                    </svg>
+                    <span>Reset</span>
+                  </button>
+                </div>
+
+                <!-- 1. Primary Method Tabs -->
+                <div class="panel-section method-section">
+                  <label class="section-label">Resize Method</label>
+                  <div class="method-tabs" role="tablist" aria-label="Resize Methods">
+                    <button type="button" class="method-tab active" data-method="dimensions" role="tab" aria-selected="true">
+                      <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none">
+                        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                        <line x1="3" y1="9" x2="21" y2="9"></line>
+                        <line x1="9" y1="21" x2="9" y2="9"></line>
+                      </svg>
+                      <span>Dimensions</span>
+                    </button>
+                    <button type="button" class="method-tab" data-method="percentage" role="tab" aria-selected="false">
+                      <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none">
+                        <line x1="19" y1="5" x2="5" y2="19"></line>
+                        <circle cx="6.5" cy="6.5" r="2.5"></circle>
+                        <circle cx="17.5" cy="17.5" r="2.5"></circle>
+                      </svg>
+                      <span>Percentage</span>
+                    </button>
+                    <button type="button" class="method-tab" data-method="aspect" role="tab" aria-selected="false">
+                      <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none">
+                        <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                      </svg>
+                      <span>Aspect Ratio</span>
+                    </button>
+                    <button type="button" class="method-tab" data-method="grid" role="tab" aria-selected="false">
+                      <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none">
+                        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="12" y1="3" x2="12" y2="21"></line>
+                        <circle cx="15" cy="9" r="1.5" fill="currentColor"></circle>
+                      </svg>
+                      <span>2D Grid</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 2A. Method Tab: By Dimensions -->
+                <div id="methodTabDimensions" class="method-tab-content">
+                  <div class="panel-section">
+                    <div class="dimension-controls-row">
+                      <!-- Width Input -->
+                      <div class="form-group flex-1">
+                        <label for="widthInput" id="widthInputLabel" class="input-label">Width (px)</label>
+                        <div class="input-with-unit">
+                          <input type="number" id="widthInput" class="form-input" min="1" max="15000" step="1" value="1920">
+                          <span class="unit">px</span>
+                        </div>
+                      </div>
+
+                      <!-- Aspect Ratio Lock Button -->
+                      <div id="lockBtnContainer" class="lock-btn-container">
+                        <button type="button" id="aspectLockBtn" class="aspect-lock-btn locked" title="Lock / Unlock Aspect Ratio" aria-pressed="true" aria-label="Toggle Aspect Ratio Lock">
+                          <svg id="lockIconLocked" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                          </svg>
+                          <svg id="lockIconUnlocked" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" class="hidden">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                          </svg>
+                        </button>
+                      </div>
+
+                      <!-- Height Input -->
+                      <div class="form-group flex-1">
+                        <label for="heightInput" id="heightInputLabel" class="input-label">Height (px)</label>
+                        <div class="input-with-unit">
+                          <input type="number" id="heightInput" class="form-input" min="1" max="15000" step="1" value="1080">
+                          <span class="unit">px</span>
+                        </div>
+                      </div>
+
+                      <!-- Swap Dimensions Button -->
+                      <div id="swapBtnContainer" class="swap-btn-container">
+                        <button type="button" id="swapDimensionsBtn" class="btn-icon swap-btn" title="Swap Width and Height (Landscape / Portrait)" aria-label="Swap Width and Height">
+                          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                            <path d="M7 16V4m0 0L3 8m4-4l4 4m6 4v12m0 0l4-4m-4 4l-4-4"></path>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Dimension Resolution Presets -->
+                    <div class="preset-chips-group">
+                      <span class="preset-chips-label">Standard Resolutions:</span>
+                      <div class="preset-chips-row">
+                        <button type="button" class="preset-chip active" data-res="original">Original</button>
+                        <button type="button" class="preset-chip" data-res="1080p">1080p FHD</button>
+                        <button type="button" class="preset-chip" data-res="720p">720p HD</button>
+                        <button type="button" class="preset-chip" data-res="1440p">1440p 2K</button>
+                        <button type="button" class="preset-chip" data-res="4k">4K UHD</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 2B. Method Tab: By Percentage -->
+                <div id="methodTabPercentage" class="method-tab-content hidden">
+                  <div class="panel-section">
+                    <div class="percentage-header-row">
+                      <label for="percentageSlider" class="input-label">Scale Factor</label>
+                      <span id="percentageTargetDims" class="percentage-target-badge">1920 × 1080 px</span>
+                    </div>
+
+                    <div class="slider-row">
+                      <input type="range" id="percentageSlider" min="1" max="200" value="100" step="1" class="form-range">
+                      <div class="input-with-unit percent-input-box">
+                        <input type="number" id="percentageNumberInput" class="form-input" min="1" max="500" value="100">
+                        <span class="unit">%</span>
+                      </div>
+                    </div>
+
+                    <div class="preset-chips-group">
+                      <span class="preset-chips-label">Quick Scales:</span>
+                      <div class="preset-chips-row">
+                        <button type="button" class="preset-chip" data-percent="25">25%</button>
+                        <button type="button" class="preset-chip" data-percent="50">50%</button>
+                        <button type="button" class="preset-chip" data-percent="75">75%</button>
+                        <button type="button" class="preset-chip active" data-percent="100">100%</button>
+                        <button type="button" class="preset-chip" data-percent="150">150%</button>
+                        <button type="button" class="preset-chip" data-percent="200">200%</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 2C. Method Tab: By Aspect Ratio -->
+                <div id="methodTabAspect" class="method-tab-content hidden">
+                  <div class="panel-section">
+                    <label class="section-label">Select Standard Aspect Ratio</label>
+                    <div class="aspect-ratio-grid">
+                      <button type="button" class="aspect-btn" data-aspect="1:1">
+                        <span class="aspect-ratio-preview aspect-1-1"></span>
+                        <span class="aspect-name">1:1 Square</span>
+                        <span class="aspect-hint">Post / Avatar</span>
+                      </button>
+                      <button type="button" class="aspect-btn active" data-aspect="16:9">
+                        <span class="aspect-ratio-preview aspect-16-9"></span>
+                        <span class="aspect-name">16:9 Landscape</span>
+                        <span class="aspect-hint">YouTube / Web</span>
+                      </button>
+                      <button type="button" class="aspect-btn" data-aspect="9:16">
+                        <span class="aspect-ratio-preview aspect-9-16"></span>
+                        <span class="aspect-name">9:16 Story / Reel</span>
+                        <span class="aspect-hint">Shorts / TikTok</span>
+                      </button>
+                      <button type="button" class="aspect-btn" data-aspect="4:3">
+                        <span class="aspect-ratio-preview aspect-4-3"></span>
+                        <span class="aspect-name">4:3 Standard</span>
+                        <span class="aspect-hint">Photo / Tablet</span>
+                      </button>
+                      <button type="button" class="aspect-btn" data-aspect="4:5">
+                        <span class="aspect-ratio-preview aspect-4-5"></span>
+                        <span class="aspect-name">4:5 Portrait</span>
+                        <span class="aspect-hint">Instagram Feed</span>
+                      </button>
+                      <button type="button" class="aspect-btn" data-aspect="21:9">
+                        <span class="aspect-ratio-preview aspect-21-9"></span>
+                        <span class="aspect-name">21:9 Ultrawide</span>
+                        <span class="aspect-hint">Cinema / Banner</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 2D. Method Tab: Interactive 2D Grid -->
+                <div id="methodTabGrid" class="method-tab-content hidden">
+                  <div class="panel-section">
+                    <div class="grid-section-header">
+                      <label class="section-label">Drag Coordinate Reticle</label>
+                      <span id="gridLockStatus" class="grid-lock-status">
+                        <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        Aspect Ratio Locked
+                      </span>
+                    </div>
+
+                    <div class="resize-grid-container">
+                      <div id="gridPlane" class="grid-plane" tabindex="0" role="slider" aria-label="2D Resize Selector" aria-valuetext="1920 by 1080 pixels">
+                        <!-- Grid Coordinate Axis Labels -->
+                        <div class="axis-y-label">Height (px) ↑</div>
+                        <div class="axis-x-label">Width (px) →</div>
+
+                        <!-- Grid Ticks / Reference SVG -->
+                        <svg id="gridSvg" class="grid-svg" xmlns="http://www.w3.org/2000/svg">
+                          <!-- Reference 100% Box -->
+                          <rect id="gridRefBox" class="grid-ref-box" x="0" y="0" width="100%" height="100%"></rect>
+                          <!-- Aspect Ratio Guide Line -->
+                          <line id="gridAspectLine" class="grid-aspect-line" x1="0" y1="100%" x2="100%" y2="0"></line>
+                          <!-- Active Selected Area Rect -->
+                          <rect id="gridActiveArea" class="grid-active-area" x="0" y="0" width="0" height="0"></rect>
+                        </svg>
+
+                        <!-- Interactive Reticle Handle -->
+                        <div id="gridHandle" class="grid-handle" title="Drag to adjust dimensions">
+                          <div class="grid-handle-dot"></div>
+                          <div id="gridHandleTooltip" class="grid-handle-tooltip">1920 × 1080</div>
+                        </div>
+                      </div>
+                      <div class="grid-legend">
+                        <span><span class="legend-dot active-dot"></span> Current size</span>
+                        <span><span class="legend-dot ref-dot"></span> Original (100%)</span>
+                        <span><span class="legend-dot guide-dot"></span> Aspect constraint</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. Ratio Mismatch / Fit Behavior Control -->
+                <div id="fitBehaviorSection" class="panel-section">
+                  <div class="fit-behavior-header">
+                    <label class="section-label">Aspect Ratio Fitting</label>
+                    <span class="fit-hint-text" id="fitBehaviorHint">Choose how to handle aspect ratio differences</span>
+                  </div>
+                  <div class="fit-mode-pills" role="radiogroup" aria-label="Fit Behavior">
+                    <button type="button" class="fit-pill active" data-fit="crop" role="radio" aria-checked="true" title="Keep proportions, center and crop excess edges">
+                      <span class="fit-pill-title">Crop to Fill</span>
+                      <span class="fit-pill-sub">Zero distortion • Trims edges</span>
+                    </button>
+                    <button type="button" class="fit-pill" data-fit="pad" role="radio" aria-checked="false" title="Keep entire image and add padding letterbox bars">
+                      <span class="fit-pill-title">Fit (Letterbox)</span>
+                      <span class="fit-pill-sub">100% visible • Clean bars</span>
+                    </button>
+                    <button type="button" class="fit-pill" data-fit="stretch" role="radio" aria-checked="false" title="Stretch and distort image to fit exact dimensions">
+                      <span class="fit-pill-title">Stretch</span>
+                      <span class="fit-pill-sub">No crop • Distorts image</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 4. Output & Quality Settings -->
+                <div class="panel-section">
+                  <label class="section-label">Output &amp; Quality</label>
+
+                  <!-- Prevent Upscaling Checkbox -->
+                  <div class="checkbox-group">
+                    <label class="checkbox-label" for="preventUpscaleToggle">
+                      <input type="checkbox" id="preventUpscaleToggle" checked>
+                      <span class="checkbox-custom"></span>
+                      <span class="checkbox-text">Prevent upscaling (keep images sharp &amp; clear)</span>
+                    </label>
+                  </div>
+
+                  <div class="settings-row">
+                    <div class="form-group flex-1">
+                      <label for="formatSelect" class="input-label">Format</label>
+                      <select id="formatSelect" class="form-select">
+                        <option value="original">Same as original</option>
+                        <option value="image/jpeg">JPG / JPEG</option>
+                        <option value="image/png">PNG (Lossless)</option>
+                        <option value="image/webp">WebP (Modern &amp; Small)</option>
+                      </select>
+                    </div>
+
+                    <div id="qualityGroup" class="form-group flex-1">
+                      <label for="qualitySlider" class="input-label">Quality: <span id="qualityValDisplay" class="highlight-val">90%</span></label>
+                      <input type="range" id="qualitySlider" min="10" max="100" value="90" step="1" class="form-range">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 5. Action Buttons -->
+                <div class="panel-actions">
+                  <button type="button" id="downloadActiveBtn" class="btn btn-primary btn-block" title="Download the active resized image">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7 10 12 15 17 10"></polyline>
+                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Download Resized Image
+                  </button>
+                  <button type="button" id="panelDownloadZipBtn" class="btn btn-outline btn-block hidden" title="Download all queued images as a ZIP">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7 10 12 15 17 10"></polyline>
+                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Download All in Batch (ZIP)
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- How To Use Guide -->
+    <section class="how-to-section">
+      <div class="container">
+        <h2 class="section-title text-center">How to Resize Images in 3 Simple Steps</h2>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <h3 class="step-title">Upload Images</h3>
+            <p class="step-desc">Drag &amp; drop single or multiple JPG, PNG, or WebP files, or click Choose Images. All files remain strictly on your device.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <h3 class="step-title">Set Dimensions or Drag 2D Grid</h3>
+            <p class="step-desc">Pick a resize mode, drag the visual 2D reticle grid to preview changes in real time, or type exact numeric pixel dimensions.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <h3 class="step-title">Download Instantly</h3>
+            <p class="step-desc">Preview your resized image side-by-side or download directly. If batch resizing, download everything bundled in a single ZIP file.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features & Privacy Section -->
+    <section class="features-section">
+      <div class="container">
+        <h2 class="section-title text-center">Why Choose Praxuni Image Resizer</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3 class="feature-title">100% Browser-Based Privacy</h3>
+            <p class="feature-desc">Your photos, documents, and creative designs are processed entirely within your browser memory. Nothing is ever sent to an external server.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📐</div>
+            <h3 class="feature-title">Interactive 2D Grid</h3>
+            <p class="feature-desc">Fine-tune width and height interactively on a visual coordinate plane with automatic aspect ratio lock and responsive touch controls.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3 class="feature-title">High-Performance Batch Processing</h3>
+            <p class="feature-desc">Resize dozens of images simultaneously using high-quality bicubic resampling and export them all at once in an instant ZIP file.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3 class="feature-title">Versatile Modes &amp; Cropping</h3>
+            <p class="feature-desc">Choose between Exact Dimensions, Fit Inside, Center Crop/Fill, Longest Edge, Shortest Edge, or simple Percentage scaling.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Tools -->
+    <section class="related-tools-section">
+      <div class="container">
+        <h2 class="section-title text-center">Explore Related Tools</h2>
+        <div class="related-grid">
+          <a href="/tools/image/compress/" class="related-card">
+            <div class="related-icon">🗜️</div>
+            <div class="related-info">
+              <div class="related-title-row">
+                <h3 class="related-title">Image Compressor</h3>
+                <span class="status-dot-live" title="Live Tool"></span>
+              </div>
+              <p class="related-desc">Reduce file size of JPG, PNG, and WebP images with adjustable quality and target file size matching.</p>
+            </div>
+          </a>
+          <a href="/tools/image/" class="related-card">
+            <div class="related-icon">🖼️</div>
+            <div class="related-info">
+              <div class="related-title-row">
+                <h3 class="related-title">Image Tools Hub</h3>
+                <span class="status-dot-live" title="Live Tool"></span>
+              </div>
+              <p class="related-desc">Discover our comprehensive collection of browser-based image utilities, converters, and editors.</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+      <div class="container">
+        <h2 class="section-title text-center">Frequently Asked Questions</h2>
+        <div class="faq-container">
+          <details class="faq-item">
+            <summary class="faq-question">How does the 2D Resize Grid work?</summary>
+            <div class="faq-answer">
+              <p>The 2D Resize Grid represents width on the horizontal X-axis and height on the vertical Y-axis. By clicking or dragging the handle, you dynamically adjust the output dimensions. When Aspect Ratio Lock is turned on, moving the handle constrains your movement along the diagonal corresponding to the image's original proportions.</p>
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-question">What is Prevent Upscaling?</summary>
+            <div class="faq-answer">
+              <p>Prevent Upscaling ensures that you do not accidentally resize an image to dimensions larger than its original resolution. Enlarging raster images beyond 100% can cause noticeable pixelation, blurriness, or softness. If you intentionally want to enlarge an image, simply uncheck the Prevent Upscaling option.</p>
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-question">Are my uploaded images private and secure?</summary>
+            <div class="faq-answer">
+              <p>Yes, completely. Praxuni is built on a browser-first architecture. Your images are loaded into local browser memory via HTML5 Canvas and Blob APIs. No image data is ever uploaded or transmitted across the network.</p>
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-question">What file formats are supported?</summary>
+            <div class="faq-answer">
+              <p>Praxuni Image Resizer natively supports JPG/JPEG, PNG, and WebP images. You can also convert between these formats upon export, and transparency is preserved when saving as PNG or WebP.</p>
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-question">Can I resize multiple images at once?</summary>
+            <div class="faq-answer">
+              <p>Yes! Drag multiple files into the dropzone or click Add More to queue several images. The chosen resize configuration applies across the batch, and you can download all resized files in a single ZIP archive or download each individually.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-left">
+        <div class="footer-brand">
+          <span class="footer-logo">⚡</span>
+          <span class="footer-name">Praxuni</span>
+        </div>
+        <p class="copyright">&copy; 2026 Praxuni &bull; All rights reserved.</p>
+      </div>
+
+      <nav class="footer-nav" aria-label="Footer Navigation">
+        <a href="/home/" class="footer-link">Home</a>
+        <a href="/tools/" class="footer-link">All Tools</a>
+        <a href="/tools/image/" class="footer-link">Image Hub</a>
+        <a href="/tools/image/compress/" class="footer-link">Compress</a>
+        <a href="/tools/image/convert/" class="footer-link">Convert</a>
+      </nav>
+
+      <div class="footer-right">
+        <span class="footer-tag">Free &bull; Fast &bull; 100% Client-Side Privacy</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/app.js"></script>
+  <script src="/tools/image/resize/image-resizer.js"></script>
+</body>
+</html>

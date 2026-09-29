@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Free online Image Converter. Convert HEIC (iPhone), JPG, PNG, WebP, SVG, and BMP images 100% locally in your browser with zero server uploads and maximum privacy.">
+  <meta name="keywords" content="image converter, heic to jpg, jpg to png, png to jpg, webp to jpg, png to webp, svg to png, client side converter, batch image converter">
+  <title>Image Converter — Convert HEIC, JPG, PNG, WebP, SVG Online Free | Praxuni</title>
+  <link rel="canonical" href="https://praxuni.com/tools/image/convert/">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/tools/image/convert/image-converter.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Praxuni Image Converter",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Convert HEIC, JPG, PNG, WebP, SVG, BMP, and GIF images client-side in your browser with zero server uploads."
+  }
+  </script>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container nav-content">
+      <div class="brand">
+        <a href="/" class="brand-link" title="Praxuni Home">
+          <span class="brand-logo">⚡</span>
+          <span class="brand-name">Praxuni</span>
+        </a>
+      </div>
+
+      <div class="header-actions">
+        <a href="/tools/image/" class="nav-back-link" title="Back to Image Tools">
+          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.5" fill="none" aria-hidden="true">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Image Hub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumbs -->
+  <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+    <div class="container">
+      <ol class="breadcrumbs">
+        <li><a href="/">Praxuni</a></li>
+        <li class="separator" aria-hidden="true">›</li>
+        <li><a href="/tools/">Tools</a></li>
+        <li class="separator" aria-hidden="true">›</li>
+        <li><a href="/tools/image/">Image</a></li>
+        <li class="separator" aria-hidden="true">›</li>
+        <li aria-current="page">Converter</li>
+      </ol>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Tool Hero Section -->
+    <section class="tool-hero">
+      <div class="container">
+        <div class="hero-badge">
+          <span class="status-dot-live" title="Status: Live" aria-hidden="true"></span>
+          <span>Browser-First Utility</span>
+        </div>
+        <h1 class="tool-title">Convert Images Online</h1>
+        <p class="tool-subtitle">
+          High-fidelity format conversion for <strong>HEIC (iPhone)</strong>, <strong>JPG</strong>, <strong>PNG</strong>, <strong>WebP</strong>, <strong>SVG</strong>, <strong>BMP</strong>, and <strong>GIF</strong>. 
+          Fast, batch-enabled, and 100% processed in your browser with zero server uploads.
+        </p>
+
+        <div class="privacy-pill">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span class="privacy-text">
+            <span class="privacy-full">100% Client-Side Processing • Files never leave your device</span>
+            <span class="privacy-mobile">100% Client-Side • Zero Server Uploads</span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Workspace Section -->
+    <section class="tool-workspace-section">
+      <div class="container">
+        <!-- Error / Notification Banner -->
+        <div id="alertBanner" class="alert-banner hidden" role="alert" aria-live="polite">
+          <div class="alert-content">
+            <span class="alert-icon" aria-hidden="true">⚠️</span>
+            <span id="alertMessage" class="alert-text"></span>
+          </div>
+          <button type="button" id="alertDismissBtn" class="alert-dismiss" aria-label="Dismiss alert">&times;</button>
+        </div>
+
+        <!-- Initial Upload Area (Empty State) -->
+        <div id="uploadDropzone" class="upload-dropzone" tabindex="0" role="button" aria-label="Upload images for conversion" data-action="upload-zone">
+          <input type="file" id="fileInput" multiple accept="image/*,.heic,.heif,.svg,.bmp,.gif" class="file-input-hidden" aria-hidden="true">
+          <div class="dropzone-inner">
+            <div class="dropzone-icon">
+              <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1.8" fill="none">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <h2 class="dropzone-title">Drop your images here, or <span class="highlight">browse</span></h2>
+            <p class="dropzone-hint">Supports HEIC (iPhone), JPG, PNG, WebP, SVG, BMP, GIF • Up to 60MB per file • Batch processing</p>
+            <div class="format-chips-row">
+              <span class="format-chip">HEIC</span>
+              <span class="format-chip">JPG</span>
+              <span class="format-chip">PNG</span>
+              <span class="format-chip">WebP</span>
+              <span class="format-chip">SVG</span>
+              <span class="format-chip">BMP</span>
+              <span class="format-chip">GIF</span>
+            </div>
+            <button type="button" id="selectFilesBtn" class="btn btn-primary dropzone-btn">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+              Choose Images
+            </button>
+            <span class="dropzone-sub-hint">Paste images directly with Ctrl+V (Cmd+V)</span>
+          </div>
+        </div>
+
+        <!-- Active Workspace (Visible once images are loaded) -->
+        <div id="workspaceArea" class="workspace-area hidden">
+          <!-- Workspace Header Toolbar -->
+          <div class="workspace-toolbar">
+            <div class="toolbar-left">
+              <span id="queueCounter" class="queue-counter">0 images selected</span>
+              <span id="conversionProgressText" class="progress-text hidden">Converting...</span>
+            </div>
+            <div class="toolbar-actions">
+              <button type="button" id="addMoreBtn" class="btn btn-outline btn-sm" title="Add more images to queue">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Add More
+              </button>
+              <button type="button" id="clearAllBtn" class="btn btn-outline btn-sm btn-danger-outline" title="Clear images">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                Clear
+              </button>
+              <button type="button" id="convertAllBtn" class="btn btn-primary btn-sm" title="Convert images">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+                Convert Image
+              </button>
+              <button type="button" id="headerDownloadBtn" class="btn btn-success btn-sm hidden" title="Download converted image">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Download</span>
+              </button>
+              <button type="button" id="downloadAllZipBtn" class="btn btn-success btn-sm hidden" title="Download all converted images as a ZIP file">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download All (ZIP)
+              </button>
+            </div>
+          </div>
+
+          <!-- Main Workspace Grid: Preview & Queue (Left) + Settings (Right) -->
+          <div class="workspace-grid">
+            <!-- Left Column: Live Preview & Details -->
+            <div class="workspace-col-left">
+
+              <!-- Interactive Live Preview Card -->
+              <div class="panel preview-card">
+                <div class="panel-header preview-header">
+                  <div class="view-mode-tabs" role="tablist" aria-label="Preview View Modes">
+                    <button type="button" class="tab-btn active" data-view="original" role="tab" aria-selected="true">Original</button>
+                    <button type="button" class="tab-btn" data-view="converted" role="tab" aria-selected="false">Converted</button>
+                    <button type="button" class="tab-btn" data-view="compare" role="tab" aria-selected="false">
+                      <span class="tab-label-full">Compare Slider</span>
+                      <span class="tab-label-mobile">Compare</span>
+                    </button>
+                  </div>
+                  <div class="zoom-controls" role="toolbar" aria-label="Zoom Controls">
+                    <button type="button" id="zoomOutBtn" class="zoom-btn zoom-btn-icon" title="Zoom Out" aria-label="Zoom Out">
+                      <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.2" fill="none">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                      </svg>
+                    </button>
+                    <button type="button" id="zoomFitBtn" class="zoom-btn active" title="Reset Zoom to 100%">100%</button>
+                    <button type="button" id="zoomInBtn" class="zoom-btn zoom-btn-icon" title="Zoom In" aria-label="Zoom In">
+                      <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.2" fill="none">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="preview-viewport-wrapper">
+                  <div id="previewViewport" class="preview-viewport checkerboard-pattern" tabindex="0" aria-label="Image Preview Area">
+                    <div id="previewCanvasContainer" class="preview-canvas-container">
+                      <img id="convertedPreviewImg" class="preview-img" alt="Converted Image Preview">
+                      <img id="originalPreviewImg" class="original-preview-img hidden" alt="Original Image Preview">
+                      
+                      <!-- Interactive Split Compare Slider View -->
+                      <div id="previewCompareContainer" class="preview-compare-container hidden">
+                        <div id="previewCompareStage" class="preview-compare-stage" style="--compare-pos: 50%;">
+                          <!-- Converted Image (Base / Right) -->
+                          <img id="previewCompareConvertedImg" class="preview-compare-img compare-base-img" alt="Converted Image">
+                          
+                          <!-- Original Image (Overlay / Left with clip-path) -->
+                          <div id="previewCompareOverlay" class="preview-compare-overlay">
+                            <img id="previewCompareOriginalImg" class="preview-compare-img compare-overlay-img" alt="Original Image">
+                          </div>
+                          
+                          <!-- Draggable Divider Handle -->
+                          <div id="previewCompareHandle" class="preview-compare-handle" tabindex="0" role="slider" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" aria-label="Compare Slider divider">
+                            <div class="preview-handle-line"></div>
+                            <div class="preview-handle-thumb">
+                              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                                <path d="M8 5v14l-6-7 6-7zm8 0l6 7-6 7V5z"/>
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Comparison Corner Badges (anchored to container to prevent clipping on portrait images) -->
+                        <span id="previewCompareOrigBadge" class="preview-compare-label label-original">Original</span>
+                        <span id="previewCompareConvBadge" class="preview-compare-label label-converted">Converted</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Floating Badges on Preview -->
+                  <div id="previewFormatTag" class="preview-format-tag hidden"></div>
+                  <div id="previewDimensionTag" class="preview-dimension-tag">-- × -- px</div>
+                </div>
+              </div>
+
+              <!-- Active Image Details & Quick Download Card -->
+              <div class="panel meta-card">
+                <div class="panel-header">
+                  <div class="meta-header-left">
+                    <h3 class="panel-title" id="activeItemName">Image Details</h3>
+                    <span id="activeStatusBadge" class="status-badge-inline">Ready</span>
+                  </div>
+                </div>
+                <div class="meta-grid">
+                  <div class="meta-col">
+                    <span class="meta-label">Source</span>
+                    <span id="metaOrigFormat" class="meta-value">-</span>
+                  </div>
+                  <div class="meta-col highlight-col">
+                    <span class="meta-label">Target</span>
+                    <span id="metaTargetFormat" class="meta-value highlight-val">-</span>
+                  </div>
+                  <div class="meta-col">
+                    <span class="meta-label">Original Size</span>
+                    <span id="metaOrigSize" class="meta-value">-</span>
+                  </div>
+                  <div class="meta-col highlight-col">
+                    <span class="meta-label">Converted Size</span>
+                    <span id="metaConvSize" class="meta-value">-</span>
+                  </div>
+                  <div class="meta-col">
+                    <span class="meta-label">Dimensions</span>
+                    <span id="metaDimensions" class="meta-value">-</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Batch Queue Card (Only displayed if multiple images) -->
+              <div id="queueCard" class="panel queue-card hidden">
+                <div class="panel-header">
+                  <h3 class="panel-title">Batch Queue (<span id="queueItemCount">0</span>)</h3>
+                  <span class="panel-hint">Click an image to preview &amp; compare</span>
+                </div>
+                <div id="cardsList" class="cards-list" role="list">
+                  <!-- Dynamically populated items -->
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Right Column: Converter Settings Panel -->
+            <aside class="workspace-col-right settings-sidebar">
+              <div class="settings-card">
+                <div class="settings-header">
+                  <h3 class="settings-title">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                    Conversion Settings
+                  </h3>
+                  <button type="button" id="resetSettingsBtn" class="btn-reset" title="Reset to default settings">
+                    <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none">
+                      <polyline points="1 4 1 10 7 10"></polyline>
+                      <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                    </svg>
+                    <span>Reset</span>
+                  </button>
+                </div>
+
+                <div class="settings-body">
+                  <!-- Format Selection (Pill Selectors Only) -->
+                  <div class="form-group">
+                    <label class="form-label">Convert To</label>
+                    <div class="format-preset-pills" role="radiogroup" aria-label="Target image format">
+                      <button type="button" class="format-preset-pill active" data-format="image/jpeg">JPG</button>
+                      <button type="button" class="format-preset-pill" data-format="image/png">PNG</button>
+                      <button type="button" class="format-preset-pill" data-format="image/webp">WebP</button>
+                      <button type="button" class="format-preset-pill" data-format="image/bmp">BMP</button>
+                    </div>
+                    <div id="transparencyNotice" class="format-notice warning hidden">
+                      ⚠️ Transparency in PNG/SVG will be filled with the chosen background color for JPG &amp; BMP.
+                    </div>
+                  </div>
+
+                  <!-- Quality Control (for JPG/WebP) -->
+                  <div id="qualityGroup" class="form-group">
+                    <div class="slider-header">
+                      <label for="convertQualitySlider" class="form-label">Quality</label>
+                      <span id="convertQualityVal" class="slider-value">95% (High)</span>
+                    </div>
+                    <input type="range" id="convertQualitySlider" min="20" max="100" value="95" step="1" class="range-slider">
+                    <div class="slider-ticks">
+                      <span>20% (Compact)</span>
+                      <span>100% (High Fidelity)</span>
+                    </div>
+                  </div>
+
+                  <!-- Background Color (for JPG/BMP) -->
+                  <div id="bgFillGroup" class="form-group">
+                    <label class="form-label">Alpha Background Fill</label>
+                    <div class="bg-fill-swatches" role="radiogroup" aria-label="Background fill presets">
+                      <button type="button" class="bg-swatch-pill active" data-color="#ffffff" title="White">
+                        <span class="color-dot" style="background:#ffffff; border: 1px solid #94a3b8;"></span>
+                        <span>White</span>
+                      </button>
+                      <button type="button" class="bg-swatch-pill" data-color="#000000" title="Black">
+                        <span class="color-dot" style="background:#000000;"></span>
+                        <span>Black</span>
+                      </button>
+                      <button type="button" class="bg-swatch-pill" data-color="#f8fafc" title="Off-White">
+                        <span class="color-dot" style="background:#f8fafc; border: 1px solid #94a3b8;"></span>
+                        <span>Off-White</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Privacy & Metadata Note -->
+                  <div class="metadata-info-note">
+                    <div class="note-header">
+                      <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                      <span>Privacy &amp; Metadata</span>
+                    </div>
+                    <p class="note-text">
+                      Browser-based canvas re-encoding creates a fresh output image and does not retain original EXIF camera metadata, GPS location, or device tags.
+                    </p>
+                  </div>
+
+                  <!-- Sidebar Action Buttons -->
+                  <div class="sidebar-action">
+                    <button type="button" id="applySettingsBtn" class="btn btn-primary btn-block btn-lg btn-convert-main" title="Convert image with selected settings">
+                      <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                      </svg>
+                      <span>Convert Image</span>
+                    </button>
+                    <button type="button" id="panelDownloadBtn" class="btn btn-success btn-block btn-lg hidden" title="Download converted image">
+                      <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                      </svg>
+                      <span>Download Converted Image</span>
+                    </button>
+                    <button type="button" id="panelDownloadZipBtn" class="btn btn-success btn-block btn-lg hidden" title="Download all converted images as a ZIP">
+                      <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                      </svg>
+                      <span>Download All (ZIP)</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <!-- Educational / FAQ Section -->
+        <section class="converter-info-section">
+          <h2 class="info-section-title">Supported Image Formats &amp; Conversion Guide</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-icon">📱</div>
+              <h3 class="info-card-title">iPhone HEIC Conversion</h3>
+              <p class="info-card-desc">
+                Apple devices capture photos in high-efficiency HEIC format by default. Our tool decodes HEIC files directly in your browser's WebAssembly sandbox, creating high-resolution universal JPEGs, PNGs, or WebP files without sending a single byte to any remote server.
+              </p>
+            </div>
+
+            <div class="info-card">
+              <div class="info-icon">🛡️</div>
+              <h3 class="info-card-title">100% Client-Side Privacy</h3>
+              <p class="info-card-desc">
+                Unlike traditional online converters that upload your personal documents and private camera photos to cloud servers, Praxuni operates completely within your local browser memory. Even if your internet disconnects, your conversion finishes seamlessly.
+              </p>
+            </div>
+
+            <div class="info-card">
+              <div class="info-icon">⚡</div>
+              <h3 class="info-card-title">PNG, WebP &amp; JPEG Quality</h3>
+              <p class="info-card-desc">
+                PNG export produces lossless pixel encoding with full transparency support, though converting from a lossy source (such as JPEG) cannot recover previously discarded data. WebP and JPEG exports use configurable lossy compression where your chosen quality slider directly balances output fidelity against file size.
+              </p>
+            </div>
+
+            <div class="info-card">
+              <div class="info-icon">🖼️</div>
+              <h3 class="info-card-title">Supported Inputs &amp; GIF Handling</h3>
+              <p class="info-card-desc">
+                We support inputs in HEIC, JPG, PNG, WebP, SVG, BMP, and GIF formats. Because images are decoded into browser canvas frames, animated GIF inputs are converted as static single frames rather than multi-frame animations. For JPEG and BMP outputs, customizable background color filling cleanly replaces any alpha transparency.
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-left">
+        <div class="footer-brand">
+          <span class="footer-logo">⚡</span>
+          <span class="footer-name">Praxuni</span>
+        </div>
+        <p class="copyright">&copy; 2026 Praxuni &bull; All rights reserved.</p>
+      </div>
+
+      <nav class="footer-nav" aria-label="Footer Navigation">
+        <a href="/home/" class="footer-link">Home</a>
+        <a href="/tools/" class="footer-link">All Tools</a>
+        <a href="/tools/image/" class="footer-link">Image Hub</a>
+        <a href="/tools/image/compress/" class="footer-link">Compress</a>
+        <a href="/tools/image/resize/" class="footer-link">Resize</a>
+      </nav>
+
+      <div class="footer-right">
+        <span class="footer-tag">Free &bull; Fast &bull; 100% Client-Side Privacy</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/app.js"></script>
+  <script src="/tools/image/convert/image-converter.js"></script>
+</body>
+</html>

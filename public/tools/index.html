@@ -12,7 +12,7 @@
 <body>
   <!-- Navigation Header -->
   <header class="header">
-    <div class="container nav-content">
+    <div class="container nav-content has-search">
       <div class="brand">
         <a href="/home/" class="brand-link" title="Praxuni Home">
           <span class="brand-logo">⚡</span>
@@ -20,18 +20,22 @@
         </a>
       </div>
 
+      <div class="search-box nav-search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="categorySearch" placeholder="Search categories & tools..." aria-label="Search categories">
+      </div>
+
       <div class="header-actions">
-        <div class="search-box">
-          <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        <a href="/tools/image/" class="nav-tools-pill" title="Explore Image Tools">
+          <span>Image Hub</span>
+          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.5" fill="none" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
           </svg>
-          <input type="text" id="categorySearch" placeholder="Search categories & tools..." aria-label="Search categories">
-        </div>
-        <div id="serviceStatus" class="status-badge checking" title="Worker Health Endpoint">
-          <span class="status-dot"></span>
-          <span class="status-label">Checking service...</span>
-        </div>
+        </a>
       </div>
     </div>
   </header>
@@ -77,8 +81,8 @@
               <p class="card-text">Compress, resize, convert, crop, and optimize photos and graphics.</p>
               <div class="tool-tags">
                 <span class="tag tag-active">Compressor</span>
-                <span class="tag">Resizer</span>
-                <span class="tag">WebP / PNG</span>
+                <span class="tag tag-active">Resizer</span>
+                <span class="tag tag-active">Converter</span>
                 <span class="tag">Crop</span>
               </div>
             </div>
@@ -285,10 +289,23 @@
   <footer class="footer">
     <div class="container footer-content">
       <div class="footer-left">
-        <p class="copyright">© 2026 Praxuni</p>
+        <div class="footer-brand">
+          <span class="footer-logo">⚡</span>
+          <span class="footer-name">Praxuni</span>
+        </div>
+        <p class="copyright">&copy; 2026 Praxuni &bull; All rights reserved.</p>
       </div>
+
+      <nav class="footer-nav" aria-label="Footer Navigation">
+        <a href="/home/" class="footer-link">Home</a>
+        <a href="/tools/image/" class="footer-link">Image Hub</a>
+        <a href="/tools/image/compress/" class="footer-link">Compress</a>
+        <a href="/tools/image/convert/" class="footer-link">Convert</a>
+        <a href="/tools/image/resize/" class="footer-link">Resize</a>
+      </nav>
+
       <div class="footer-right">
-        <span class="footer-tag">Free & Open Utilities</span>
+        <span class="footer-tag">Free &bull; Fast &bull; 100% Client-Side Privacy</span>
       </div>
     </div>
   </footer>

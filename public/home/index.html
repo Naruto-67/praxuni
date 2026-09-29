@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Praxuni — Free online tools for everyday digital work. Fast, private, browser-based utilities for files, conversions, formatting, and calculations.">
+  <meta name="description" content="Praxuni — Free online tools for everyday digital work. Fast, private, browser-based utilities for image compression, format conversion, resizing, and everyday digital workflows.">
   <title>Praxuni — Free Tools for Everyday Digital Work</title>
   <link rel="canonical" href="https://praxuni.com/home/">
   <link rel="stylesheet" href="/style.css">
@@ -21,54 +21,213 @@
       </div>
 
       <div class="header-actions">
-        <a href="/tools/" class="tag tag-active" style="text-decoration:none;padding:0.4rem 0.9rem;font-size:0.85rem;" title="Explore All Tools">All Tools &rarr;</a>
-        <div id="serviceStatus" class="status-badge checking" title="Worker Health Endpoint">
-          <span class="status-dot"></span>
-          <span class="status-label">Worker: Checking...</span>
-        </div>
+        <a href="/tools/" class="nav-tools-pill" title="Explore All Tools">
+          <span>All Tools</span>
+          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.5" fill="none" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
       </div>
     </div>
   </header>
 
   <!-- Hero Section -->
   <main>
-    <section class="hero" style="padding: 5rem 0 3.5rem; text-align: center;">
+    <section class="hero">
       <div class="container hero-content">
-        <div class="hero-badge">100% Client-Side Privacy &bull; Zero Server Uploads</div>
-        <h1 class="hero-title" style="font-size: 3.5rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.75rem; color: #ffffff;">Praxuni</h1>
-        <p class="hero-tagline" style="font-size: 1.45rem; color: var(--accent-primary); font-weight: 600; margin-bottom: 1.25rem;">Free tools for everyday digital work.</p>
-        <p class="hero-description" style="max-width: 640px; margin: 0 auto 2.5rem; font-size: 1.1rem; line-height: 1.6; color: var(--text-secondary);">
-          Praxuni provides fast, browser-native digital utilities to compress, convert, resize, calculate, and format files directly on your device. No sign-ups, no tracking, and no paywalls.
+        <div class="hero-badge">
+          <span class="pulse-dot" aria-hidden="true"></span>
+          <span>100% Client-Side Privacy &bull; Zero Server Uploads</span>
+        </div>
+        <h1 class="hero-title"><span class="hero-title-gradient">Praxuni</span></h1>
+        <p class="hero-tagline">Free tools for everyday digital work.</p>
+        <p class="hero-description">
+          Fast, browser-native digital utilities to compress, convert, and resize files directly on your device. Zero cloud uploads, zero wait times, and completely private.
         </p>
-        <div class="hero-cta-wrap" style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-          <a href="/tools/" class="btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--accent-primary); color: #0f172a; font-weight: 700; font-size: 1.05rem; padding: 0.85rem 2rem; border-radius: var(--radius-md); text-decoration: none; transition: var(--transition); box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);">
+        <div class="hero-cta-wrap">
+          <a href="/tools/" class="btn btn-primary btn-lg" title="Explore All Tools">
             Explore All Tools &rarr;
           </a>
-          <a href="/tools/image/" class="btn-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(30, 41, 59, 0.8); border: 1px solid var(--border-color); color: var(--text-primary); font-weight: 600; font-size: 1.05rem; padding: 0.85rem 1.75rem; border-radius: var(--radius-md); text-decoration: none; transition: var(--transition);">
+          <a href="/tools/image/" class="btn btn-secondary btn-lg" title="Image Tools Hub">
             Image Tools Hub
+          </a>
+        </div>
+        <div class="hero-quick-chips" aria-label="Quick Tool Jump">
+          <a href="/tools/image/compress/" class="quick-chip" title="Compress Images">
+            <span class="chip-icon">🗜️</span>
+            <span>Compress</span>
+          </a>
+          <a href="/tools/image/convert/" class="quick-chip" title="Convert Images">
+            <span class="chip-icon">🔄</span>
+            <span>Convert</span>
+          </a>
+          <a href="/tools/image/resize/" class="quick-chip" title="Resize Images">
+            <span class="chip-icon">📐</span>
+            <span>Resize</span>
+          </a>
+          <a href="/tools/image/" class="quick-chip" title="Image Tools Hub">
+            <span class="chip-icon">🖼️</span>
+            <span>Image Hub</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Direct-Launch Utilities -->
+    <section class="featured-tools-section" aria-label="Featured Tools">
+      <div class="container">
+        <div class="section-header-compact">
+          <div class="section-title-wrap">
+            <h2 class="section-title">Popular Utilities</h2>
+            <span class="badge-pill">Ready to Use</span>
+          </div>
+          <p class="section-subtitle">Instant, high-performance web utilities running 100% offline in your browser</p>
+        </div>
+
+        <div class="featured-tools-grid">
+          <!-- Image Compressor Card -->
+          <a href="/tools/image/compress/" class="tool-launch-card" title="Open Image Compressor">
+            <div>
+              <div class="tool-card-top">
+                <div class="tool-card-icon icon-compress" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none">
+                    <polyline points="4 14 10 14 10 20"></polyline>
+                    <polyline points="20 10 14 10 14 4"></polyline>
+                    <line x1="14" y1="10" x2="21" y2="3"></line>
+                    <line x1="3" y1="21" x2="10" y2="14"></line>
+                  </svg>
+                </div>
+                <span class="tool-action-link">
+                  Launch
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </span>
+              </div>
+              <h3 class="tool-card-title">Image Compressor</h3>
+              <p class="tool-card-desc">Reduce JPG, PNG, and WebP file sizes up to 90% with side-by-side split visual comparison.</p>
+            </div>
+            <div class="tool-card-tags">
+              <span class="tool-tag highlight">JPG</span>
+              <span class="tool-tag highlight">PNG</span>
+              <span class="tool-tag highlight">WebP</span>
+              <span class="tool-tag">Visual Compare</span>
+              <span class="tool-tag">Target Size</span>
+            </div>
+          </a>
+
+          <!-- Image Converter Card -->
+          <a href="/tools/image/convert/" class="tool-launch-card" title="Open Image Converter">
+            <div>
+              <div class="tool-card-top">
+                <div class="tool-card-icon icon-convert" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none">
+                    <path d="M7 16V4m0 0L3 8m4-4l4 4m6 4v12m0 0l4-4m-4 4l-4-4"></path>
+                  </svg>
+                </div>
+                <span class="tool-action-link">
+                  Launch
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </span>
+              </div>
+              <h3 class="tool-card-title">Image Converter</h3>
+              <p class="tool-card-desc">Fast batch conversion between modern formats including WebP, AVIF, HEIC, PNG, JPG, and SVG.</p>
+            </div>
+            <div class="tool-card-tags">
+              <span class="tool-tag highlight">WebP</span>
+              <span class="tool-tag highlight">AVIF</span>
+              <span class="tool-tag highlight">HEIC</span>
+              <span class="tool-tag">PNG</span>
+              <span class="tool-tag">JPG</span>
+              <span class="tool-tag">SVG</span>
+            </div>
+          </a>
+
+          <!-- Image Resizer Card -->
+          <a href="/tools/image/resize/" class="tool-launch-card" title="Open Image Resizer">
+            <div>
+              <div class="tool-card-top">
+                <div class="tool-card-icon icon-resize" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none">
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <polyline points="9 21 3 21 3 15"></polyline>
+                    <line x1="21" y1="3" x2="14" y2="10"></line>
+                    <line x1="3" y1="21" x2="10" y2="14"></line>
+                  </svg>
+                </div>
+                <span class="tool-action-link">
+                  Launch
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </span>
+              </div>
+              <h3 class="tool-card-title">Image Resizer</h3>
+              <p class="tool-card-desc">Scale pixel dimensions, maintain strict aspect ratios, or choose quick social media presets.</p>
+            </div>
+            <div class="tool-card-tags">
+              <span class="tool-tag highlight">Dimensions</span>
+              <span class="tool-tag highlight">Aspect Ratio</span>
+              <span class="tool-tag">Social Presets</span>
+              <span class="tool-tag">Batch Resize</span>
+            </div>
+          </a>
+        </div>
+
+        <!-- Explore Hub Callout -->
+        <div class="hub-explore-bar">
+          <div class="hub-explore-text">
+            <span class="explore-icon" aria-hidden="true">✨</span>
+            <div>
+              <div class="explore-title">Need PDF, Text, or Developer Utilities?</div>
+              <div class="explore-desc">Explore the full directory of modular web tools designed for maximum efficiency.</div>
+            </div>
+          </div>
+          <a href="/tools/" class="btn btn-secondary btn-md" title="Explore All Tools">
+            Explore All Categories &rarr;
           </a>
         </div>
       </div>
     </section>
 
     <!-- Key Highlights Section -->
-    <section class="features-section" style="padding: 2rem 0 5rem;">
+    <section class="features-section" aria-label="Praxuni Highlights">
       <div class="container">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: 0 auto;">
-          <div style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; text-align: left;">
-            <div style="font-size: 2rem; margin-bottom: 0.75rem;">🔒</div>
-            <h3 style="font-size: 1.2rem; color: #ffffff; margin-bottom: 0.5rem; font-weight: 700;">100% Client-Side Privacy</h3>
-            <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.6;">Your files never leave your device. All image compression, conversions, and calculations execute entirely in your browser's local memory.</p>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon-box icon-shield" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </div>
+            <h3 class="feature-title">100% Client-Side Privacy</h3>
+            <p class="feature-desc">Your files never leave your device. All image compression, conversions, and calculations execute entirely in your browser's local memory.</p>
           </div>
-          <div style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; text-align: left;">
-            <div style="font-size: 2rem; margin-bottom: 0.75rem;">⚡</div>
-            <h3 style="font-size: 1.2rem; color: #ffffff; margin-bottom: 0.5rem; font-weight: 700;">Instant Processing</h3>
-            <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.6;">Powered by modern browser APIs like Canvas and WebAssembly. No network upload wait times, cloud queue delays, or bandwidth limits.</p>
+          <div class="feature-card">
+            <div class="feature-icon-box icon-speed" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+            </div>
+            <h3 class="feature-title">Instant Processing</h3>
+            <p class="feature-desc">Powered by modern browser APIs like HTML5 Canvas and WebAssembly. No network upload wait times, cloud queue delays, or bandwidth limits.</p>
           </div>
-          <div style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; text-align: left;">
-            <div style="font-size: 2rem; margin-bottom: 0.75rem;">🆓</div>
-            <h3 style="font-size: 1.2rem; color: #ffffff; margin-bottom: 0.5rem; font-weight: 700;">Completely Free</h3>
-            <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.6;">No accounts, no subscriptions, no ads, and no paywalls. Clean, accessible productivity tools designed for everyone.</p>
+          <div class="feature-card">
+            <div class="feature-icon-box icon-free" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M8 12h8"></path>
+                <path d="M12 8v8"></path>
+              </svg>
+            </div>
+            <h3 class="feature-title">Completely Free</h3>
+            <p class="feature-desc">No accounts, no subscriptions, no ads, and no paywalls. Clean, accessible productivity tools designed for everyone.</p>
           </div>
         </div>
       </div>
@@ -79,8 +238,21 @@
   <footer class="footer">
     <div class="container footer-content">
       <div class="footer-left">
-        <p class="copyright">&copy; 2026 Praxuni</p>
+        <div class="footer-brand">
+          <span class="footer-logo">⚡</span>
+          <span class="footer-name">Praxuni</span>
+        </div>
+        <p class="copyright">&copy; 2026 Praxuni &bull; All rights reserved.</p>
       </div>
+
+      <nav class="footer-nav" aria-label="Footer Navigation">
+        <a href="/tools/" class="footer-link">All Tools</a>
+        <a href="/tools/image/" class="footer-link">Image Hub</a>
+        <a href="/tools/image/compress/" class="footer-link">Compress</a>
+        <a href="/tools/image/convert/" class="footer-link">Convert</a>
+        <a href="/tools/image/resize/" class="footer-link">Resize</a>
+      </nav>
+
       <div class="footer-right">
         <span class="footer-tag">Free &bull; Fast &bull; 100% Client-Side Privacy</span>
       </div>

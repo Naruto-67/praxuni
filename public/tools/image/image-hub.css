@@ -43,7 +43,7 @@
 
 /* Hub Hero */
 .hub-hero {
-  padding: 3.5rem 0 2.5rem;
+  padding: 2.5rem 0 1.75rem;
   text-align: center;
   background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.12) 0%, transparent 70%);
   border-bottom: 1px solid var(--border-subtle);
@@ -61,37 +61,57 @@
   background: rgba(56, 189, 248, 0.1);
   border: 1px solid rgba(56, 189, 248, 0.25);
   color: var(--accent-primary);
-  margin-bottom: 1rem;
+  margin-bottom: 0.85rem;
 }
 
 .hub-title {
-  font-size: 2.85rem;
+  font-size: clamp(2rem, 4vw, 2.5rem);
   font-weight: 800;
   letter-spacing: -0.03em;
-  margin-bottom: 0.65rem;
+  margin-bottom: 0.5rem;
   color: #ffffff;
 }
 
 .hub-subtitle {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   color: var(--text-secondary);
   max-width: 680px;
-  margin: 0 auto 1.5rem;
-  line-height: 1.6;
+  margin: 0 auto 1.25rem;
+  line-height: 1.55;
 }
 
 .privacy-pill {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.5rem;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 500;
   color: #34d399;
   background: rgba(16, 185, 129, 0.1);
   border: 1px solid rgba(16, 185, 129, 0.25);
-  padding: 0.4rem 1rem;
+  padding: 0.35rem 0.85rem;
   border-radius: 9999px;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+  line-height: 1.35;
+  max-width: 100%;
+}
+
+.privacy-pill svg {
+  flex-shrink: 0;
+  margin-top: 0.12rem;
+}
+
+.privacy-text {
+  display: inline;
+}
+
+.privacy-full {
+  display: inline;
+}
+
+.privacy-mobile {
+  display: none;
 }
 
 /* Hub Controls: Search & Jump Bar */
@@ -356,6 +376,34 @@
   line-height: 1.5;
 }
 
+.card-chip-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+}
+
+.card-subchip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 0.2rem 0.5rem;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.card-subchip:hover {
+  background: rgba(56, 189, 248, 0.22);
+  border-color: var(--accent-primary);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
 /* Card Statuses */
 .tool-badge {
   font-size: 0.68rem;
@@ -556,6 +604,78 @@
   outline-offset: 3px;
 }
 
+/* Quick Shortcuts & Presets Section */
+.shortcuts-section {
+  padding-top: 1.5rem;
+  margin-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.shortcuts-block {
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.shortcuts-block-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.shortcuts-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.shortcut-link-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.55rem 0.95rem;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 0.84rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.shortcut-link-pill:hover {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.4);
+  color: var(--accent-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.shortcut-pill-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.shortcut-pill-arrow {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.shortcut-link-pill:hover .shortcut-pill-arrow {
+  color: var(--accent-primary);
+  transform: translateX(2px);
+}
+
 /* Responsive Breakpoints */
 @media (max-width: 900px) {
   .hub-title {
@@ -586,6 +706,20 @@
 
   .hub-subtitle {
     font-size: 1rem;
+  }
+
+  .privacy-pill {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.76rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .privacy-full {
+    display: none;
+  }
+
+  .privacy-mobile {
+    display: inline;
   }
 
   .hub-content {

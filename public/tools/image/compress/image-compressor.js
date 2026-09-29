@@ -11,6 +11,9 @@
   const state = {
     queue: [],
     isProcessing: false,
+    activeId: null,
+    viewMode: "compressed", // 'compressed' | 'original' | 'split'
+    zoomLevel: "fit",
     activeCompareId: null,
     settings: {
       mode: "balanced",
@@ -18,6 +21,7 @@
       format: "auto",
       targetSizeEnabled: false,
       targetSizeBytes: 100 * 1024,
+      targetAllowDownscale: false,
       preserveDimensions: true,
       maxWidth: null,
       maxHeight: null
@@ -61,8 +65,44 @@
       addMoreBtn: document.getElementById("addMoreBtn"),
       clearAllBtn: document.getElementById("clearAllBtn"),
       compressAllBtn: document.getElementById("compressAllBtn"),
+      headerDownloadBtn: document.getElementById("headerDownloadBtn"),
       downloadAllBtn: document.getElementById("downloadAllBtn"),
 
+      // Live Preview & Split Controls
+      viewModeTabs: document.querySelectorAll(".view-mode-tabs .tab-btn"),
+      zoomOutBtn: document.getElementById("zoomOutBtn"),
+      zoomFitBtn: document.getElementById("zoomFitBtn"),
+      zoomInBtn: document.getElementById("zoomInBtn"),
+      previewViewport: document.getElementById("previewViewport"),
+      previewCanvasContainer: document.getElementById("previewCanvasContainer"),
+      compressedPreviewImg: document.getElementById("compressedPreviewImg"),
+      originalPreviewImg: document.getElementById("originalPreviewImg"),
+      previewCompareContainer: document.getElementById("previewCompareContainer"),
+      previewCompareStage: document.getElementById("previewCompareStage"),
+      previewCompareCompressedImg: document.getElementById("previewCompareCompressedImg"),
+      previewCompareOriginalImg: document.getElementById("previewCompareOriginalImg"),
+      previewCompareOverlay: document.getElementById("previewCompareOverlay"),
+      previewCompareHandle: document.getElementById("previewCompareHandle"),
+      previewCompareOrigBadge: document.getElementById("previewCompareOrigBadge"),
+      previewCompareCompBadge: document.getElementById("previewCompareCompBadge"),
+      previewSavingsTag: document.getElementById("previewSavingsTag"),
+      previewDimensionTag: document.getElementById("previewDimensionTag"),
+
+      // Active Meta Card
+      activeItemName: document.getElementById("activeItemName"),
+      activeStatusBadge: document.getElementById("activeStatusBadge"),
+      downloadActiveBtn: document.getElementById("downloadActiveBtn"),
+      metaOrigSize: document.getElementById("metaOrigSize"),
+      metaCompSize: document.getElementById("metaCompSize"),
+      metaSavedPct: document.getElementById("metaSavedPct"),
+      metaDimensions: document.getElementById("metaDimensions"),
+      metaFormat: document.getElementById("metaFormat"),
+
+      // Batch Queue Card
+      queueCard: document.getElementById("queueCard"),
+      queueItemCount: document.getElementById("queueItemCount"),
+
+      // Sidebar Controls & Buttons
       settingsCard: document.querySelector(".settings-card"),
       modePills: document.querySelectorAll(".mode-pill"),
       qualitySlider: document.getElementById("qualitySlider"),
@@ -74,6 +114,7 @@
       targetPresets: document.querySelectorAll(".preset-btn"),
       customTargetInput: document.getElementById("customTargetInput"),
       customTargetUnit: document.getElementById("customTargetUnit"),
+      targetAllowDownscale: document.getElementById("targetAllowDownscale"),
       advancedToggleBtn: document.getElementById("advancedToggleBtn"),
       advancedContent: document.getElementById("advancedContent"),
       preserveDimensions: document.getElementById("preserveDimensions"),
@@ -82,7 +123,10 @@
       maxHeightInput: document.getElementById("maxHeightInput"),
       resetSettingsBtn: document.getElementById("resetSettingsBtn"),
       applySettingsBtn: document.getElementById("applySettingsBtn"),
+      panelDownloadBtn: document.getElementById("panelDownloadBtn"),
+      panelDownloadZipBtn: document.getElementById("panelDownloadZipBtn"),
 
+      // Modal Comparison (Legacy / Fullscreen option)
       compareModal: document.getElementById("compareModal"),
       compareBackdrop: document.getElementById("compareBackdrop"),
       compareCloseBtn: document.getElementById("compareCloseBtn"),
@@ -343,10 +387,281 @@
     return { width, height, sourceElement, hasAlpha, mimeType };
   }
 
+  function getActiveItem() {
+    if (!state.queue || state.queue.length === 0) return null;
+    return state.queue.find(i => i.id === state.activeId) || state.queue[0];
+  }
+
+  function selectActiveItem(id) {
+    if (state.activeId === id) return;
+    state.activeId = id;
+    renderCards();
+    updateActivePreviewDisplay();
+  }
+
+  function applyZoom() {
+    const container = dom.previewCanvasContainer;
+    if (!container) return;
+    const z = typeof state.zoomLevel === "number" ? state.zoomLevel : 1;
+    container.style.transform = `scale(${z})`;
+    if (dom.zoomFitBtn) {
+      dom.zoomFitBtn.textContent = `${Math.round(z * 100)}%`;
+      dom.zoomFitBtn.classList.toggle("active", z === 1);
+    }
+  }
+
+  function updateActivePreviewDisplay() {
+    const active = getActiveItem();
+    if (!active) return;
+
+    const mode = state.viewMode || "compressed";
+    if (dom.compressedPreviewImg) {
+      dom.compressedPreviewImg.classList.toggle("hidden", mode !== "compressed");
+      if (mode === "compressed") {
+        dom.compressedPreviewImg.src = active.compressedUrl || active.originalUrl;
+      }
+    }
+    if (dom.originalPreviewImg) {
+      dom.originalPreviewImg.classList.toggle("hidden", mode !== "original");
+      if (mode === "original") {
+        dom.originalPreviewImg.src = active.originalUrl;
+      }
+    }
+    if (dom.previewCompareContainer) {
+      dom.previewCompareContainer.classList.toggle("hidden", mode !== "compare");
+      if (mode === "compare") {
+        if (dom.previewCompareCompressedImg) {
+          dom.previewCompareCompressedImg.src = active.compressedUrl || active.originalUrl;
+        }
+        if (dom.previewCompareOriginalImg) {
+          dom.previewCompareOriginalImg.src = active.originalUrl;
+        }
+        if (dom.previewCompareOrigBadge) {
+          dom.previewCompareOrigBadge.textContent = `Original • ${formatBytes(active.originalSize)}`;
+        }
+        if (dom.previewCompareCompBadge) {
+          if (active.compressedSize !== null) {
+            const diff = active.originalSize - active.compressedSize;
+            const pct = Math.round((diff / active.originalSize) * 1000) / 10;
+            const savingsText = diff >= 0 ? `(-${pct}%)` : `(+${-pct}%)`;
+            dom.previewCompareCompBadge.textContent = `Compressed • ${formatBytes(active.compressedSize)} ${savingsText}`;
+          } else {
+            dom.previewCompareCompBadge.textContent = `Compressed • Ready`;
+          }
+        }
+      }
+    }
+
+    // Floating Preview Badges
+    if (dom.previewSavingsTag) {
+      if (mode === "compare") {
+        dom.previewSavingsTag.style.display = "none";
+      } else if (active.status === "done" && active.compressedSize !== null) {
+        const diff = active.originalSize - active.compressedSize;
+        const pct = Math.round((diff / active.originalSize) * 1000) / 10;
+        if (diff >= 0) {
+          dom.previewSavingsTag.textContent = `Saved ${formatBytes(diff)} (${pct}%)`;
+          dom.previewSavingsTag.style.display = "block";
+        } else {
+          dom.previewSavingsTag.textContent = `Increased by ${formatBytes(-diff)} (${-pct}%)`;
+          dom.previewSavingsTag.style.display = "block";
+        }
+      } else {
+        dom.previewSavingsTag.style.display = "none";
+      }
+    }
+
+    if (dom.previewDimensionTag) {
+      const w = active.compressedWidth || active.originalWidth || "--";
+      const h = active.compressedHeight || active.originalHeight || "--";
+      const fmt = (active.compressedType || active.originalType).replace("image/", "").toUpperCase();
+      dom.previewDimensionTag.textContent = `${w} × ${h} px • ${fmt}`;
+    }
+
+    // Meta Card
+    if (dom.activeItemName) dom.activeItemName.textContent = active.originalName;
+    if (dom.activeStatusBadge) {
+      if (active.status === "done") {
+        if (active.targetStatus === "met") {
+          dom.activeStatusBadge.textContent = "✓ Target Met";
+          dom.activeStatusBadge.className = "status-badge-inline target-met";
+        } else if (active.targetStatus === "missed") {
+          const targetStr = state.settings.targetSizeBytes ? formatBytes(state.settings.targetSizeBytes) : "Target";
+          dom.activeStatusBadge.textContent = `⚠ Exceeded ${targetStr}`;
+          dom.activeStatusBadge.className = "status-badge-inline target-missed";
+        } else {
+          dom.activeStatusBadge.textContent = "✓ Compressed";
+          dom.activeStatusBadge.className = "status-badge-inline";
+        }
+      } else if (active.status === "processing") {
+        dom.activeStatusBadge.textContent = "⏳ Compressing...";
+        dom.activeStatusBadge.className = "status-badge-inline processing";
+      } else if (active.status === "error") {
+        dom.activeStatusBadge.textContent = "⚠ Error";
+        dom.activeStatusBadge.className = "status-badge-inline error";
+      } else {
+        dom.activeStatusBadge.textContent = "Ready";
+        dom.activeStatusBadge.className = "status-badge-inline";
+      }
+    }
+
+    if (dom.metaOrigSize) dom.metaOrigSize.textContent = formatBytes(active.originalSize);
+    if (dom.metaCompSize) {
+      dom.metaCompSize.textContent = active.compressedSize !== null ? formatBytes(active.compressedSize) : "Compressing...";
+    }
+    if (dom.metaSavedPct) {
+      if (active.compressedSize !== null) {
+        const diff = active.originalSize - active.compressedSize;
+        const pct = Math.round((diff / active.originalSize) * 1000) / 10;
+        if (diff >= 0) {
+          dom.metaSavedPct.innerHTML = `<span class="saved-bytes">${formatBytes(diff)}</span> <span class="saved-pct">-${pct}%</span>`;
+          dom.metaSavedPct.className = "meta-value highlight-green";
+        } else {
+          dom.metaSavedPct.innerHTML = `<span class="saved-bytes">+${formatBytes(-diff)}</span> <span class="saved-pct highlight-val">+${-pct}%</span>`;
+          dom.metaSavedPct.className = "meta-value highlight-val";
+        }
+      } else {
+        dom.metaSavedPct.textContent = "--";
+      }
+    }
+    if (dom.metaDimensions) {
+      const w = active.compressedWidth || active.originalWidth || "--";
+      const h = active.compressedHeight || active.originalHeight || "--";
+      dom.metaDimensions.textContent = `${w} × ${h} px`;
+    }
+    if (dom.metaFormat) {
+      dom.metaFormat.textContent = (active.compressedType || active.originalType).replace("image/", "").toUpperCase();
+    }
+
+    if (dom.downloadActiveBtn) {
+      const isDone = active.status === "done" && active.compressedBlob;
+      dom.downloadActiveBtn.classList.toggle("hidden", !isDone);
+    }
+
+    applyZoom();
+  }
+
+  function downloadActiveItem() {
+    const active = getActiveItem();
+    if (active) downloadItem(active);
+  }
+
   function initWorkspaceEvents() {
     if (dom.clearAllBtn) dom.clearAllBtn.addEventListener("click", clearQueue);
     if (dom.compressAllBtn) dom.compressAllBtn.addEventListener("click", () => processQueue(true));
     if (dom.downloadAllBtn) dom.downloadAllBtn.addEventListener("click", downloadAllAsZip);
+    if (dom.panelDownloadZipBtn) dom.panelDownloadZipBtn.addEventListener("click", downloadAllAsZip);
+    if (dom.downloadActiveBtn) dom.downloadActiveBtn.addEventListener("click", downloadActiveItem);
+    if (dom.panelDownloadBtn) dom.panelDownloadBtn.addEventListener("click", downloadActiveItem);
+    if (dom.headerDownloadBtn) dom.headerDownloadBtn.addEventListener("click", downloadActiveItem);
+
+    if (dom.viewModeTabs) {
+      dom.viewModeTabs.forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.viewMode = btn.dataset.view;
+          dom.viewModeTabs.forEach(b => {
+            const isActive = b.dataset.view === state.viewMode;
+            b.classList.toggle("active", isActive);
+            b.setAttribute("aria-selected", String(isActive));
+          });
+          updateActivePreviewDisplay();
+        });
+      });
+    }
+
+    if (dom.zoomInBtn) {
+      dom.zoomInBtn.addEventListener("click", () => {
+        let z = typeof state.zoomLevel === "number" ? state.zoomLevel : 1;
+        z = Math.min(3, Math.round((z + 0.25) * 100) / 100);
+        state.zoomLevel = z;
+        applyZoom();
+      });
+    }
+    if (dom.zoomOutBtn) {
+      dom.zoomOutBtn.addEventListener("click", () => {
+        let z = typeof state.zoomLevel === "number" ? state.zoomLevel : 1;
+        z = Math.max(0.25, Math.round((z - 0.25) * 100) / 100);
+        state.zoomLevel = z;
+        applyZoom();
+      });
+    }
+    if (dom.zoomFitBtn) {
+      dom.zoomFitBtn.addEventListener("click", () => {
+        state.zoomLevel = 1;
+        applyZoom();
+      });
+    }
+
+    initPreviewCompareSlider();
+  }
+
+  let isDraggingCompare = false;
+
+  function initPreviewCompareSlider() {
+    const container = dom.previewCompareStage || dom.previewCompareContainer;
+    if (!container) return;
+
+    function startDrag(e) {
+      if (e.type === "mousedown" && e.button !== 0) return;
+      isDraggingCompare = true;
+      container.classList.add("is-dragging");
+      updateFromEvent(e);
+      e.preventDefault();
+    }
+
+    function updateFromEvent(e) {
+      if (!isDraggingCompare) return;
+      const target = dom.previewCompareStage || dom.previewCompareContainer;
+      if (!target) return;
+      const rect = target.getBoundingClientRect();
+      if (!rect.width) return;
+      const clientX = e.touches && e.touches.length > 0 ? e.touches[0].clientX : e.clientX;
+      if (clientX === undefined) return;
+      const offsetX = clientX - rect.left;
+      let pct = (offsetX / rect.width) * 100;
+      pct = Math.max(0, Math.min(100, pct));
+      setPreviewComparePos(pct);
+    }
+
+    function stopDrag() {
+      if (isDraggingCompare) {
+        isDraggingCompare = false;
+        container.classList.remove("is-dragging");
+      }
+    }
+
+    container.addEventListener("mousedown", startDrag);
+    window.addEventListener("mousemove", updateFromEvent);
+    window.addEventListener("mouseup", stopDrag);
+
+    container.addEventListener("touchstart", startDrag, { passive: false });
+    window.addEventListener("touchmove", updateFromEvent, { passive: true });
+    window.addEventListener("touchend", stopDrag);
+    window.addEventListener("touchcancel", stopDrag);
+
+    if (dom.previewCompareHandle) {
+      dom.previewCompareHandle.addEventListener("keydown", (e) => {
+        const target = dom.previewCompareStage || dom.previewCompareContainer;
+        let currentPct = parseFloat(target.style.getPropertyValue("--compare-pos")) || 50;
+        if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+          e.preventDefault();
+          setPreviewComparePos(Math.max(0, currentPct - 5));
+        } else if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+          e.preventDefault();
+          setPreviewComparePos(Math.min(100, currentPct + 5));
+        }
+      });
+    }
+  }
+
+  function setPreviewComparePos(pct) {
+    const target = dom.previewCompareStage || dom.previewCompareContainer;
+    if (!target) return;
+    const rounded = Math.round(pct * 10) / 10;
+    target.style.setProperty("--compare-pos", `${rounded}%`);
+    if (dom.previewCompareHandle) {
+      dom.previewCompareHandle.setAttribute("aria-valuenow", Math.round(rounded));
+    }
   }
 
   function clearQueue() {
@@ -355,6 +670,7 @@
       revokeItemUrls(item);
     });
     state.queue = [];
+    state.activeId = null;
     hideAlert();
     renderWorkspace();
     checkTransparencyWarning();
@@ -367,6 +683,9 @@
       item.cancelled = true;
       revokeItemUrls(item);
       state.queue.splice(index, 1);
+      if (state.activeId === id) {
+        state.activeId = state.queue[0]?.id || null;
+      }
       renderWorkspace();
       checkTransparencyWarning();
     }
@@ -394,15 +713,51 @@
     if (count === 0) {
       dom.workspaceArea.classList.add("hidden");
       dom.uploadDropzone.classList.remove("hidden");
+      state.activeId = null;
       return;
+    }
+
+    if (!state.activeId || !state.queue.find(i => i.id === state.activeId)) {
+      state.activeId = state.queue[0].id;
     }
 
     dom.uploadDropzone.classList.add("hidden");
     dom.workspaceArea.classList.remove("hidden");
     dom.queueCounter.textContent = `${count} ${count === 1 ? "image" : "images"} selected`;
 
+    if (dom.clearAllBtn) {
+      dom.clearAllBtn.innerHTML = `
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        </svg>
+        ${count === 1 ? "Clear" : "Clear All"}
+      `;
+      dom.clearAllBtn.title = count === 1 ? "Clear image" : "Clear all images";
+    }
+
+    if (dom.compressAllBtn) {
+      dom.compressAllBtn.classList.toggle("hidden", count <= 1);
+      dom.compressAllBtn.innerHTML = `
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+        Compress All (${count})
+      `;
+    }
+
+    if (dom.queueCard) {
+      if (count > 1) {
+        dom.queueCard.classList.remove("hidden");
+        if (dom.queueItemCount) dom.queueItemCount.textContent = count;
+      } else {
+        dom.queueCard.classList.add("hidden");
+      }
+    }
+
     renderCards();
     updateSavingsSummary();
+    updateActivePreviewDisplay();
   }
 
   function renderCards() {
@@ -415,9 +770,14 @@
 
   function createCardElement(item) {
     const card = document.createElement("article");
-    card.className = "image-card";
+    card.className = "image-card" + (item.id === state.activeId ? " is-active" : "");
     card.id = `card_${item.id}`;
     card.setAttribute("role", "listitem");
+    card.style.cursor = "pointer";
+    card.addEventListener("click", (e) => {
+      if (e.target.closest("button")) return;
+      selectActiveItem(item.id);
+    });
 
     const thumbWrapper = document.createElement("div");
     thumbWrapper.className = "card-thumb-wrapper";
@@ -506,8 +866,23 @@
         </svg>
         Compare
       `;
-      compareBtn.title = "View interactive before/after comparison";
-      compareBtn.addEventListener("click", () => openComparisonModal(item.id));
+      compareBtn.title = "Compare Original vs Compressed";
+      compareBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        selectActiveItem(item.id);
+        state.viewMode = "compare";
+        if (dom.viewModeTabs) {
+          dom.viewModeTabs.forEach(b => {
+            const isActive = b.dataset.view === "compare";
+            b.classList.toggle("active", isActive);
+            b.setAttribute("aria-selected", String(isActive));
+          });
+        }
+        updateActivePreviewDisplay();
+        if (dom.previewViewport) {
+          dom.previewViewport.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      });
       actions.appendChild(compareBtn);
 
       const downloadBtn = document.createElement("button");
@@ -576,10 +951,23 @@
         dom.savingsSummary.className = "savings-summary";
       }
       dom.savingsSummary.classList.remove("hidden");
-      dom.downloadAllBtn.classList.remove("hidden");
+      if (state.queue.length > 1) {
+        dom.downloadAllBtn.classList.remove("hidden");
+        if (dom.panelDownloadZipBtn) dom.panelDownloadZipBtn.classList.remove("hidden");
+        if (dom.panelDownloadBtn) dom.panelDownloadBtn.classList.add("hidden");
+        if (dom.headerDownloadBtn) dom.headerDownloadBtn.classList.add("hidden");
+      } else {
+        dom.downloadAllBtn.classList.add("hidden");
+        if (dom.panelDownloadZipBtn) dom.panelDownloadZipBtn.classList.add("hidden");
+        if (dom.panelDownloadBtn) dom.panelDownloadBtn.classList.remove("hidden");
+        if (dom.headerDownloadBtn) dom.headerDownloadBtn.classList.remove("hidden");
+      }
     } else {
       dom.savingsSummary.classList.add("hidden");
       dom.downloadAllBtn.classList.add("hidden");
+      if (dom.panelDownloadZipBtn) dom.panelDownloadZipBtn.classList.add("hidden");
+      if (dom.panelDownloadBtn) dom.panelDownloadBtn.classList.add("hidden");
+      if (dom.headerDownloadBtn) dom.headerDownloadBtn.classList.add("hidden");
     }
   }
 
@@ -616,6 +1004,13 @@
   }
 
   function initSettingsEvents() {
+    if (dom.formatSelect && window.initCustomSelect) {
+      window.initCustomSelect(dom.formatSelect);
+    }
+    if (dom.customTargetUnit && window.initCustomSelect) {
+      window.initCustomSelect(dom.customTargetUnit);
+    }
+
     dom.modePills.forEach(pill => {
       pill.addEventListener("click", () => {
         if (state.isProcessing) return;
@@ -635,6 +1030,7 @@
           updateQuality(65);
           if (dom.formatSelect.value === "auto") {
             dom.formatSelect.value = "image/webp";
+            dom.formatSelect.dispatchEvent(new Event('change', { bubbles: true }));
             state.settings.format = "image/webp";
           }
         } else if (mode === "quality") {
@@ -672,6 +1068,7 @@
         const val = parseInt(btn.dataset.target, 10);
         dom.customTargetInput.value = val;
         dom.customTargetUnit.value = "KB";
+        dom.customTargetUnit.dispatchEvent(new Event('change', { bubbles: true }));
         recalculateTargetBytes();
       });
     });
@@ -684,6 +1081,12 @@
     dom.customTargetUnit.addEventListener("change", () => {
       recalculateTargetBytes();
     });
+
+    if (dom.targetAllowDownscale) {
+      dom.targetAllowDownscale.addEventListener("change", (e) => {
+        state.settings.targetAllowDownscale = e.target.checked;
+      });
+    }
 
     dom.advancedToggleBtn.addEventListener("click", () => {
       const isExpanded = dom.advancedToggleBtn.getAttribute("aria-expanded") === "true";
@@ -719,6 +1122,68 @@
     dom.applySettingsBtn.addEventListener("click", () => {
       processQueue(true);
     });
+
+    applyUrlParams();
+  }
+
+  function applyUrlParams() {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetParam = urlParams.get("target") || urlParams.get("size");
+      const modeParam = urlParams.get("mode");
+      const formatParam = urlParams.get("format") || urlParams.get("to");
+
+      if (targetParam || modeParam === "target") {
+        if (dom.targetSizeToggle && !dom.targetSizeToggle.checked) {
+          dom.targetSizeToggle.checked = true;
+          dom.targetSizeToggle.dispatchEvent(new Event("change"));
+        }
+
+        if (targetParam) {
+          const match = targetParam.trim().match(/^(\d+)\s*(kb|mb)?$/i);
+          if (match) {
+            const num = parseInt(match[1], 10);
+            const unit = (match[2] || "KB").toUpperCase();
+            if (unit === "KB") {
+              const matchedPreset = Array.from(dom.targetPresets).find(b => parseInt(b.dataset.target, 10) === num);
+              if (matchedPreset) {
+                matchedPreset.click();
+              } else if (dom.customTargetInput) {
+                dom.customTargetInput.value = num;
+                if (dom.customTargetUnit) {
+                  dom.customTargetUnit.value = "KB";
+                  dom.customTargetUnit.dispatchEvent(new Event("change", { bubbles: true }));
+                }
+                recalculateTargetBytes();
+              }
+            } else if (dom.customTargetInput) {
+              dom.customTargetInput.value = num;
+              if (dom.customTargetUnit) {
+                dom.customTargetUnit.value = unit;
+                dom.customTargetUnit.dispatchEvent(new Event("change", { bubbles: true }));
+              }
+              recalculateTargetBytes();
+            }
+          }
+        }
+      }
+
+      if (formatParam && dom.formatSelect) {
+        const mimeMap = {
+          "png": "image/png",
+          "jpg": "image/jpeg",
+          "jpeg": "image/jpeg",
+          "webp": "image/webp"
+        };
+        const targetMime = mimeMap[formatParam.toLowerCase()] || formatParam;
+        if (dom.formatSelect.querySelector(`option[value="${targetMime}"]`)) {
+          dom.formatSelect.value = targetMime;
+          dom.formatSelect.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      }
+    } catch (e) {
+      // Gracefully ignore URL param errors
+    }
   }
 
   function updateQuality(val) {
@@ -760,6 +1225,7 @@
       format: "auto",
       targetSizeEnabled: false,
       targetSizeBytes: 100 * 1024,
+      targetAllowDownscale: false,
       preserveDimensions: true,
       maxWidth: null,
       maxHeight: null
@@ -773,13 +1239,35 @@
 
     updateQuality(80);
     dom.formatSelect.value = "auto";
+    dom.formatSelect.dispatchEvent(new Event('change', { bubbles: true }));
     dom.transparencyNotice.classList.add("hidden");
     dom.targetSizeToggle.checked = false;
     dom.targetSizeOptions.classList.add("hidden");
+    dom.targetPresets.forEach(b => {
+      b.classList.toggle("active", b.dataset.target === "100");
+    });
+    if (dom.customTargetInput) dom.customTargetInput.value = "100";
+    if (dom.customTargetUnit) dom.customTargetUnit.value = "KB";
+    if (dom.targetAllowDownscale) {
+      dom.targetAllowDownscale.checked = false;
+    }
     dom.preserveDimensions.checked = true;
     dom.dimensionInputs.classList.add("hidden");
     dom.maxWidthInput.value = "";
     dom.maxHeightInput.value = "";
+    if (dom.advancedToggleBtn && dom.advancedContent) {
+      dom.advancedToggleBtn.setAttribute("aria-expanded", "false");
+      dom.advancedContent.classList.add("hidden");
+    }
+
+    // Reset zoom level to 100% / fit
+    state.zoomLevel = 1;
+    applyZoom();
+
+    // Reset image queue back to original dimensions & default balanced settings
+    if (state.queue && state.queue.length > 0) {
+      processQueue(true);
+    }
   }
 
   /**
@@ -835,6 +1323,15 @@
         setSettingsDisabled(false);
         updateSavingsSummary();
         renderCards();
+        updateActivePreviewDisplay();
+
+        if (state.settings.targetSizeEnabled) {
+          const missedItems = state.queue.filter(i => i.targetStatus === "missed");
+          if (missedItems.length > 0) {
+            const targetLabel = state.settings.targetSizeBytes ? formatBytes(state.settings.targetSizeBytes) : "target size";
+            showAlert(`Note: ${missedItems.length === 1 ? '1 image' : `${missedItems.length} images`} could not reach ${targetLabel} under current dimension constraints. Enable "Scale resolution if needed" or switch format to WebP.`);
+          }
+        }
       }
     })();
 
@@ -907,13 +1404,15 @@
       let finalH = outH;
 
       if (settings.targetSizeEnabled && settings.targetSizeBytes) {
+        const allowDownscale = settings.targetAllowDownscale !== false;
         const targetResult = await compressToTargetSize(
           canvas,
           targetMime,
           settings.targetSizeBytes,
           outW,
           outH,
-          item.sourceElement
+          item.sourceElement,
+          allowDownscale
         );
 
         if (item.cancelled || !state.queue.some(i => i.id === item.id)) {
@@ -971,110 +1470,180 @@
     }
 
     renderCards();
+    if (item.id === state.activeId) {
+      updateActivePreviewDisplay();
+    }
   }
 
   /**
    * Target-size compression returning exact Blob, status, and actual dimensions
    */
-  async function compressToTargetSize(canvas, mimeType, targetBytes, width, height, sourceElement) {
-    if (mimeType === "image/png") {
-      const pngBlob = await canvasToBlobAsync(canvas, "image/png");
-      const targetStatus = pngBlob.size <= targetBytes ? "met" : "missed";
-      return { blob: pngBlob, targetStatus, width, height };
+  async function compressToTargetSize(canvas, mimeType, targetBytes, width, height, sourceElement, allowDownscale = true) {
+    function toBlob(cvs, q) {
+      return new Promise((resolve) => {
+        cvs.toBlob(resolve, mimeType, q);
+      });
     }
 
-    let minQ = 0.10;
-    let maxQ = 0.98;
-    let iterations = 0;
-    const MAX_ITERATIONS = 7;
-
-    let bestMetBlob = null;
-    let bestMetW = width;
-    let bestMetH = height;
-
-    let smallestBlob = null;
-    let smallestW = width;
-    let smallestH = height;
-
-    function registerCandidate(blob, w, h) {
-      if (!blob || blob.size === 0) return;
-
-      // Track smallest blob found if target cannot be reached
-      if (!smallestBlob || blob.size < smallestBlob.size) {
-        smallestBlob = blob;
-        smallestW = w;
-        smallestH = h;
+    function createScaledCanvas(w, h) {
+      const sc = document.createElement("canvas");
+      sc.width = w;
+      sc.height = h;
+      const sCtx = sc.getContext("2d", { alpha: mimeType !== "image/jpeg" });
+      if (sCtx) {
+        if (mimeType === "image/jpeg") {
+          sCtx.fillStyle = "#FFFFFF";
+          sCtx.fillRect(0, 0, w, h);
+        }
+        sCtx.imageSmoothingEnabled = true;
+        sCtx.imageSmoothingQuality = "high";
+        let drawn = false;
+        if (sourceElement && (sourceElement.naturalWidth || sourceElement.width)) {
+          try {
+            sCtx.drawImage(sourceElement, 0, 0, w, h);
+            drawn = true;
+          } catch {}
+        }
+        if (!drawn) {
+          sCtx.drawImage(canvas, 0, 0, w, h);
+        }
       }
+      return sc;
+    }
 
-      // Track best blob that meets target (<= targetBytes)
+    let bestMetCandidate = null;
+    let smallestOverallCandidate = null;
+
+    function registerCandidate(blob, w, h, q) {
+      if (!blob || blob.size === 0) return;
+      if (!smallestOverallCandidate || blob.size < smallestOverallCandidate.blob.size) {
+        smallestOverallCandidate = { blob, width: w, height: h, quality: q };
+      }
       if (blob.size <= targetBytes) {
-        if (!bestMetBlob || blob.size > bestMetBlob.size) {
-          bestMetBlob = blob;
-          bestMetW = w;
-          bestMetH = h;
+        const score = (w * h) * Math.pow(q || 0.8, 1.2);
+        if (!bestMetCandidate || score > bestMetCandidate.score) {
+          bestMetCandidate = { blob, width: w, height: h, quality: q, score };
         }
       }
     }
 
-    while (iterations < MAX_ITERATIONS && (maxQ - minQ) > 0.04) {
-      iterations++;
-      const currentQ = (minQ + maxQ) / 2;
-      const blob = await canvasToBlobAsync(canvas, mimeType, currentQ);
+    // --- CASE 1: PNG format ---
+    if (mimeType === "image/png") {
+      const fullBlob = await toBlob(canvas);
+      registerCandidate(fullBlob, width, height, 1.0);
 
-      registerCandidate(blob, width, height);
+      if (fullBlob && fullBlob.size <= targetBytes) {
+        return { blob: fullBlob, targetStatus: "met", width, height };
+      }
 
-      if (blob.size <= targetBytes) {
-        minQ = currentQ;
-      } else {
-        maxQ = currentQ;
+      if (allowDownscale && fullBlob) {
+        let currentScale = Math.min(0.9, Math.sqrt(targetBytes / fullBlob.size) * 1.05);
+        for (let pass = 0; pass < 6; pass++) {
+          const scaledW = Math.max(32, Math.round(width * currentScale));
+          const scaledH = Math.max(32, Math.round(height * currentScale));
+          const sc = createScaledCanvas(scaledW, scaledH);
+          const sBlob = await toBlob(sc);
+          registerCandidate(sBlob, scaledW, scaledH, 1.0);
+          if (sBlob && sBlob.size <= targetBytes) {
+            break;
+          }
+          currentScale *= 0.75;
+          if (scaledW <= 64 || scaledH <= 64) break;
+        }
+      }
+
+      if (bestMetCandidate) {
+        return { blob: bestMetCandidate.blob, targetStatus: "met", width: bestMetCandidate.width, height: bestMetCandidate.height };
+      }
+      return {
+        blob: smallestOverallCandidate ? smallestOverallCandidate.blob : fullBlob,
+        targetStatus: smallestOverallCandidate && smallestOverallCandidate.blob.size <= targetBytes ? "met" : "missed",
+        width: smallestOverallCandidate ? smallestOverallCandidate.width : width,
+        height: smallestOverallCandidate ? smallestOverallCandidate.height : height
+      };
+    }
+
+    // --- CASE 2: JPEG / WebP formats ---
+    const minQ = 0.08;
+    const lowQBlob = await toBlob(canvas, minQ);
+    registerCandidate(lowQBlob, width, height, minQ);
+
+    if (lowQBlob && lowQBlob.size <= targetBytes) {
+      let low = minQ;
+      let high = 0.96;
+      for (let i = 0; i < 6; i++) {
+        const mid = (low + high) / 2;
+        const b = await toBlob(canvas, mid);
+        registerCandidate(b, width, height, mid);
+        if (b && b.size <= targetBytes) {
+          low = mid;
+        } else {
+          high = mid;
+        }
+      }
+
+      if (bestMetCandidate) {
+        return { blob: bestMetCandidate.blob, targetStatus: "met", width, height };
       }
     }
 
-    // If target not reached with quality adjustments, try intelligent downscale passes
-    if (!bestMetBlob && sourceElement) {
-      let currentScale = 0.8;
-      while (currentScale >= 0.38 && !bestMetBlob) {
-        const scaledW = Math.max(1, Math.round(width * currentScale));
-        const scaledH = Math.max(1, Math.round(height * currentScale));
+    if (allowDownscale) {
+      const currentMinSize = smallestOverallCandidate ? smallestOverallCandidate.blob.size : (lowQBlob ? lowQBlob.size : targetBytes * 2);
+      const rawScale = Math.sqrt(targetBytes / currentMinSize);
+      const initialScale = Math.min(0.85, Math.max(0.10, rawScale * 1.15));
 
-        const scaleCanvas = document.createElement("canvas");
-        scaleCanvas.width = scaledW;
-        scaleCanvas.height = scaledH;
-        const scaleCtx = scaleCanvas.getContext("2d");
-        if (scaleCtx) {
-          if (mimeType === "image/jpeg") {
-            scaleCtx.fillStyle = "#FFFFFF";
-            scaleCtx.fillRect(0, 0, scaledW, scaledH);
+      const candidateScales = [
+        initialScale,
+        initialScale * 0.80,
+        initialScale * 0.60,
+        initialScale * 0.45,
+        initialScale * 0.32,
+        0.20,
+        0.12
+      ].filter((s, idx, arr) => s >= 0.05 && s <= 0.90 && (idx === 0 || arr[idx - 1] - s > 0.04));
+
+      for (const scale of candidateScales) {
+        const scaledW = Math.max(32, Math.round(width * scale));
+        const scaledH = Math.max(32, Math.round(height * scale));
+        const sc = createScaledCanvas(scaledW, scaledH);
+
+        const b65 = await toBlob(sc, 0.65);
+        registerCandidate(b65, scaledW, scaledH, 0.65);
+
+        if (b65 && b65.size <= targetBytes) {
+          const b82 = await toBlob(sc, 0.82);
+          registerCandidate(b82, scaledW, scaledH, 0.82);
+          if (b82 && b82.size <= targetBytes) {
+            const b90 = await toBlob(sc, 0.90);
+            registerCandidate(b90, scaledW, scaledH, 0.90);
           }
-          scaleCtx.imageSmoothingEnabled = true;
-          scaleCtx.imageSmoothingQuality = "high";
-
-          try {
-            scaleCtx.drawImage(sourceElement, 0, 0, scaledW, scaledH);
-            const scaledBlob = await canvasToBlobAsync(scaleCanvas, mimeType, 0.4);
-            registerCandidate(scaledBlob, scaledW, scaledH);
-          } catch {
+          break;
+        } else {
+          const b38 = await toBlob(sc, 0.38);
+          registerCandidate(b38, scaledW, scaledH, 0.38);
+          if (b38 && b38.size <= targetBytes) {
+            const b50 = await toBlob(sc, 0.50);
+            registerCandidate(b50, scaledW, scaledH, 0.50);
             break;
           }
         }
-        currentScale -= 0.2;
       }
     }
 
-    if (bestMetBlob) {
+    if (bestMetCandidate) {
       return {
-        blob: bestMetBlob,
+        blob: bestMetCandidate.blob,
         targetStatus: "met",
-        width: bestMetW,
-        height: bestMetH
+        width: bestMetCandidate.width,
+        height: bestMetCandidate.height
       };
     }
 
     return {
-      blob: smallestBlob,
-      targetStatus: smallestBlob && smallestBlob.size <= targetBytes ? "met" : "missed",
-      width: smallestW,
-      height: smallestH
+      blob: smallestOverallCandidate ? smallestOverallCandidate.blob : lowQBlob,
+      targetStatus: smallestOverallCandidate && smallestOverallCandidate.blob.size <= targetBytes ? "met" : "missed",
+      width: smallestOverallCandidate ? smallestOverallCandidate.width : width,
+      height: smallestOverallCandidate ? smallestOverallCandidate.height : height
     };
   }
 

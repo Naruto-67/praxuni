@@ -35,22 +35,16 @@
           <span class="brand-logo">⚡</span>
           <span class="brand-name">Praxuni</span>
         </a>
-        <span class="nav-divider">/</span>
-        <span class="nav-tool-title">Image Tools</span>
       </div>
 
       <div class="header-actions">
-        <a href="/tools/" class="nav-back-link">
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+        <a href="/tools/" class="nav-back-link" title="Explore All Tools">
+          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.5" fill="none" aria-hidden="true">
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>
           </svg>
-          <span>All Categories</span>
+          <span>All Tools</span>
         </a>
-        <div id="serviceStatus" class="status-badge checking" title="Worker Health Endpoint">
-          <span class="status-dot"></span>
-          <span class="status-label">Worker: Checking...</span>
-        </div>
       </div>
     </div>
   </header>
@@ -83,7 +77,10 @@
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
           </svg>
-          <span>100% Client-Side Processing • Your images never leave your browser</span>
+          <span class="privacy-text">
+            <span class="privacy-full">100% Client-Side Processing • Your images never leave your browser</span>
+            <span class="privacy-mobile">100% Client-Side • Zero Server Uploads</span>
+          </span>
         </div>
       </div>
     </section>
@@ -103,11 +100,11 @@
         <div class="quick-nav-pills" role="navigation" aria-label="Section shortcuts">
           <a href="#smart-recommendations" class="nav-pill">Smart Guide</a>
           <a href="#popular-tools" class="nav-pill">Popular</a>
-          <a href="#conversion-tools" class="nav-pill">Conversion</a>
           <a href="#forms-tools" class="nav-pill">Forms &amp; Gov</a>
           <a href="#privacy-tools" class="nav-pill">Privacy &amp; Info</a>
           <a href="#developer-tools" class="nav-pill">Developer</a>
           <a href="#creative-tools" class="nav-pill">Creative</a>
+          <a href="#quick-shortcuts" class="nav-pill">Quick Shortcuts</a>
         </div>
       </div>
 
@@ -193,7 +190,7 @@
         </div>
 
         <div class="tools-grid">
-          <a href="/tools/image-compressor/" class="tool-card status-card-live" data-name="image compressor" data-category="popular" title="Open Praxuni Image Compressor">
+          <a href="/tools/image/compress/" class="tool-card status-card-live" data-name="image compressor" data-category="popular" title="Open Praxuni Image Compressor">
             <div class="card-top">
               <div class="card-icon-wrap live-icon">
                 <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none">
@@ -212,16 +209,19 @@
             </div>
           </a>
 
-          <article class="tool-card status-card-disabled" data-name="image resizer" data-category="popular">
+          <a href="/tools/image/resize/" class="tool-card status-card-live" data-name="image resizer" data-category="popular" title="Open Praxuni Image Resizer">
             <div class="card-top">
-              <div class="card-icon-wrap">📐</div>
-              <span class="tool-badge status-coming-soon">Coming Soon</span>
+              <div class="card-icon-wrap live-icon">📐</div>
+              <span class="tool-badge status-live" title="Live Tool">
+                <span class="status-dot-live" aria-hidden="true"></span>
+                <span class="sr-only">Status: Live</span>
+              </span>
             </div>
             <div class="card-info">
-              <h3 class="tool-card-title">Image Resizer</h3>
-              <p class="tool-card-desc">Change pixel dimensions, percentage scaling, or fit images inside maximum width and height bounds.</p>
+              <h3 class="tool-card-title">Image Resizer <span class="arrow-indicator">→</span></h3>
+              <p class="tool-card-desc">Change pixel dimensions, scale by percentage, or use our interactive 2D grid with instant preview.</p>
             </div>
-          </article>
+          </a>
 
           <article class="tool-card status-card-disabled" data-name="image cropper" data-category="popular">
             <div class="card-top">
@@ -234,16 +234,19 @@
             </div>
           </article>
 
-          <article class="tool-card status-card-disabled" data-name="image converter" data-category="popular">
+          <a href="/tools/image/convert/" class="tool-card status-card-live" data-name="image converter convert heic png jpg webp svg bmp" data-category="popular" title="Open Praxuni Image Converter">
             <div class="card-top">
-              <div class="card-icon-wrap">🔁</div>
-              <span class="tool-badge status-coming-soon">Coming Soon</span>
+              <div class="card-icon-wrap live-icon">🔁</div>
+              <span class="tool-badge status-live" title="Live Tool" aria-label="Status: Live">
+                <span class="status-dot-live" aria-hidden="true"></span>
+                <span class="sr-only">Status: Live</span>
+              </span>
             </div>
             <div class="card-info">
-              <h3 class="tool-card-title">Image Converter</h3>
-              <p class="tool-card-desc">Convert single or batch images between JPG, PNG, WebP, SVG, and other modern graphic formats.</p>
+              <h3 class="tool-card-title">Image Converter <span class="arrow-indicator">→</span></h3>
+              <p class="tool-card-desc">Batch convert between HEIC (iPhone), JPG, PNG, WebP, SVG, and BMP. 100% lossless client-side conversion.</p>
             </div>
-          </article>
+          </a>
 
           <article class="tool-card status-card-disabled" data-name="image improver" data-category="popular">
             <div class="card-top">
@@ -280,93 +283,6 @@
         </div>
       </section>
 
-      <!-- Conversion Tools -->
-      <section id="conversion-tools" class="hub-section">
-        <div class="section-title-wrap">
-          <h2 class="section-heading">Conversion Tools</h2>
-          <p class="section-subtext">Fast, direct format transitions preserving alpha transparency and color depth.</p>
-        </div>
-
-        <div class="tools-grid">
-          <article class="tool-card status-card-disabled" data-name="jpg to png" data-category="conversion">
-            <div class="card-top">
-              <div class="card-icon-wrap">🔄</div>
-              <span class="tool-badge status-coming-soon">Coming Soon</span>
-            </div>
-            <div class="card-info">
-              <h3 class="tool-card-title">JPG to PNG</h3>
-              <p class="tool-card-desc">Convert JPEG photographs into lossless PNG images ready for transparency editing and overlays.</p>
-            </div>
-          </article>
-
-          <article class="tool-card status-card-disabled" data-name="png to jpg" data-category="conversion">
-            <div class="card-top">
-              <div class="card-icon-wrap">🔄</div>
-              <span class="tool-badge status-coming-soon">Coming Soon</span>
-            </div>
-            <div class="card-info">
-              <h3 class="tool-card-title">PNG to JPG</h3>
-              <p class="tool-card-desc">Flatten transparent PNGs on a clean background and compress into widely compatible JPEGs.</p>
-            </div>
-          </article>
-
-          <article class="tool-card status-card-disabled" data-name="jpg to webp" data-category="conversion">
-            <div class="card-top">
-              <div class="card-icon-wrap">⚡</div>
-              <span class="tool-badge status-coming-soon">Coming Soon</span>
-            </div>
-            <div class="card-info">
-              <h3 class="tool-card-title">JPG to WebP</h3>
-              <p class="tool-card-desc">Upgrade older JPG graphics to modern WebP format for 30%+ smaller file sizes and faster web page loads.</p>
-            </div>
-          </article>
-
-          <article class="tool-card status-card-disabled" data-name="png to webp" data-category="conversion">
-            <div class="card-top">
-              <div class="card-icon-wrap">⚡</div>
-              <span class="tool-badge status-coming-soon">Coming Soon</span>
-            </div>
-            <div class="card-info">
-              <h3 class="tool-card-title">PNG to WebP</h3>
-              <p class="tool-card-desc">Convert transparent PNGs to WebP, preserving transparent layers while slashing heavy file sizes.</p>
-            </div>
-          </article>
-
-          <article class="tool-card status-card-disabled" data-name="webp to jpg" data-category="conversion">
-            <div class="card-top">
-              <div class="card-icon-wrap">🔄</div>
-              <span class="tool-badge status-coming-soon">Coming Soon</span>
-            </div>
-            <div class="card-info">
-              <h3 class="tool-card-title">WebP to JPG</h3>
-              <p class="tool-card-desc">Convert newer WebP files into universal JPEGs for older desktop software, printers, and legacy web tools.</p>
-            </div>
-          </article>
-
-          <article class="tool-card status-card-disabled" data-name="webp to png" data-category="conversion">
-            <div class="card-top">
-              <div class="card-icon-wrap">🔄</div>
-              <span class="tool-badge status-coming-soon">Coming Soon</span>
-            </div>
-            <div class="card-info">
-              <h3 class="tool-card-title">WebP to PNG</h3>
-              <p class="tool-card-desc">Convert WebP assets into uncompressed PNGs for high-precision graphic design and print workflows.</p>
-            </div>
-          </article>
-
-          <article class="tool-card status-card-disabled" data-name="heic to jpg" data-category="conversion">
-            <div class="card-top">
-              <div class="card-icon-wrap">📱</div>
-              <span class="tool-badge status-coming-soon">Coming Soon</span>
-            </div>
-            <div class="card-info">
-              <h3 class="tool-card-title">HEIC to JPG</h3>
-              <p class="tool-card-desc">Convert Apple iPhone HEIC and HEIF photos to universal JPEG format right in your browser.</p>
-            </div>
-          </article>
-        </div>
-      </section>
-
       <!-- Forms & Applications -->
       <section id="forms-tools" class="hub-section">
         <div class="section-title-wrap">
@@ -394,61 +310,6 @@
             <div class="card-info">
               <h3 class="tool-card-title">Signature Resizer</h3>
               <p class="tool-card-desc">Crop and scale scanned signatures to exact aspect ratios and strict 10 KB–20 KB file requirements.</p>
-            </div>
-          </article>
-
-          <article class="tool-card status-card-disabled" data-name="compress image to 20 kb" data-category="forms">
-            <div class="card-top">
-              <div class="card-icon-wrap">🎯</div>
-              <span class="tool-badge status-coming-soon">Coming Soon</span>
-            </div>
-            <div class="card-info">
-              <h3 class="tool-card-title">Compress Image to 20 KB</h3>
-              <p class="tool-card-desc">Aggressive quality and dimension optimization designed to satisfy strict 20 KB portal thresholds.</p>
-            </div>
-          </article>
-
-          <article class="tool-card status-card-disabled" data-name="compress image to 50 kb" data-category="forms">
-            <div class="card-top">
-              <div class="card-icon-wrap">🎯</div>
-              <span class="tool-badge status-coming-soon">Coming Soon</span>
-            </div>
-            <div class="card-info">
-              <h3 class="tool-card-title">Compress Image to 50 KB</h3>
-              <p class="tool-card-desc">Target-matching compression for job applications, identity cards, and exam certificates.</p>
-            </div>
-          </article>
-
-          <article class="tool-card status-card-disabled" data-name="compress image to 100 kb" data-category="forms">
-            <div class="card-top">
-              <div class="card-icon-wrap">🎯</div>
-              <span class="tool-badge status-coming-soon">Coming Soon</span>
-            </div>
-            <div class="card-info">
-              <h3 class="tool-card-title">Compress Image to 100 KB</h3>
-              <p class="tool-card-desc">Compress photos, resumes, and document scans under the universal 100 KB attachment cap.</p>
-            </div>
-          </article>
-
-          <article class="tool-card status-card-disabled" data-name="compress image to 200 kb" data-category="forms">
-            <div class="card-top">
-              <div class="card-icon-wrap">🎯</div>
-              <span class="tool-badge status-coming-soon">Coming Soon</span>
-            </div>
-            <div class="card-info">
-              <h3 class="tool-card-title">Compress Image to 200 KB</h3>
-              <p class="tool-card-desc">Optimize portfolio pieces, web headers, and receipts under 200 KB while retaining crisp readability.</p>
-            </div>
-          </article>
-
-          <article class="tool-card status-card-disabled" data-name="exact dimension image resizer" data-category="forms">
-            <div class="card-top">
-              <div class="card-icon-wrap">📐</div>
-              <span class="tool-badge status-coming-soon">Coming Soon</span>
-            </div>
-            <div class="card-info">
-              <h3 class="tool-card-title">Exact Dimension Resizer</h3>
-              <p class="tool-card-desc">Fit exact portal dimensions with intelligent background padding, preventing distortion or stretching.</p>
             </div>
           </article>
 
@@ -594,6 +455,97 @@
         </div>
       </section>
 
+      <!-- Quick Tasks & Format Shortcuts -->
+      <section id="quick-shortcuts" class="hub-section shortcuts-section">
+        <div class="section-title-wrap">
+          <h2 class="section-heading">Quick Tasks &amp; Format Shortcuts</h2>
+          <p class="section-subtext">Direct 1-click links to specific format conversions and government form presets.</p>
+        </div>
+
+        <!-- Format Conversion Shortcuts -->
+        <div class="shortcuts-block">
+          <div class="shortcuts-block-title">
+            <span>🔄</span> Format Conversions (100% In-Browser)
+          </div>
+          <div class="shortcuts-pills-row">
+            <a href="/tools/image/convert/?from=heic&to=jpg" class="shortcut-link-pill" title="Convert Apple iPhone HEIC photos to universal JPG">
+              <span class="shortcut-pill-icon">📱</span>
+              <span>HEIC to JPG</span>
+              <span class="shortcut-pill-arrow">→</span>
+            </a>
+            <a href="/tools/image/convert/?from=jpg&to=png" class="shortcut-link-pill" title="Convert JPG photo to lossless PNG">
+              <span class="shortcut-pill-icon">🖼️</span>
+              <span>JPG to PNG</span>
+              <span class="shortcut-pill-arrow">→</span>
+            </a>
+            <a href="/tools/image/convert/?from=png&to=jpg" class="shortcut-link-pill" title="Convert PNG with transparency to universal JPG">
+              <span class="shortcut-pill-icon">🔄</span>
+              <span>PNG to JPG</span>
+              <span class="shortcut-pill-arrow">→</span>
+            </a>
+            <a href="/tools/image/convert/?from=webp&to=jpg" class="shortcut-link-pill" title="Convert modern WebP to standard JPG">
+              <span class="shortcut-pill-icon">⚡</span>
+              <span>WebP to JPG</span>
+              <span class="shortcut-pill-arrow">→</span>
+            </a>
+            <a href="/tools/image/convert/?from=png&to=webp" class="shortcut-link-pill" title="Convert transparent PNG to WebP to slash file size">
+              <span class="shortcut-pill-icon">⚡</span>
+              <span>PNG to WebP</span>
+              <span class="shortcut-pill-arrow">→</span>
+            </a>
+            <a href="/tools/image/convert/?from=jpg&to=webp" class="shortcut-link-pill" title="Upgrade JPG to modern fast WebP">
+              <span class="shortcut-pill-icon">⚡</span>
+              <span>JPG to WebP</span>
+              <span class="shortcut-pill-arrow">→</span>
+            </a>
+            <a href="/tools/image/convert/?from=svg&to=png" class="shortcut-link-pill" title="Rasterize vector SVG into crisp PNG">
+              <span class="shortcut-pill-icon">🎨</span>
+              <span>SVG to PNG</span>
+              <span class="shortcut-pill-arrow">→</span>
+            </a>
+            <a href="/tools/image/convert/?from=webp&to=png" class="shortcut-link-pill" title="Convert WebP to lossless uncompressed PNG">
+              <span class="shortcut-pill-icon">🔄</span>
+              <span>WebP to PNG</span>
+              <span class="shortcut-pill-arrow">→</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Form & Dimension Presets -->
+        <div class="shortcuts-block">
+          <div class="shortcuts-block-title">
+            <span>🎯</span> Portal &amp; Form Presets
+          </div>
+          <div class="shortcuts-pills-row">
+            <a href="/tools/image/compress/?target=20kb" class="shortcut-link-pill" title="Compress photos or signatures under 20 KB">
+              <span class="shortcut-pill-icon">🎯</span>
+              <span>Compress to 20 KB</span>
+              <span class="shortcut-pill-arrow">→</span>
+            </a>
+            <a href="/tools/image/compress/?target=50kb" class="shortcut-link-pill" title="Compress images under 50 KB">
+              <span class="shortcut-pill-icon">🎯</span>
+              <span>Compress to 50 KB</span>
+              <span class="shortcut-pill-arrow">→</span>
+            </a>
+            <a href="/tools/image/compress/?target=100kb" class="shortcut-link-pill" title="Compress under universal 100 KB attachment cap">
+              <span class="shortcut-pill-icon">🎯</span>
+              <span>Compress to 100 KB</span>
+              <span class="shortcut-pill-arrow">→</span>
+            </a>
+            <a href="/tools/image/compress/?target=200kb" class="shortcut-link-pill" title="Compress documents and resumes under 200 KB">
+              <span class="shortcut-pill-icon">🎯</span>
+              <span>Compress to 200 KB</span>
+              <span class="shortcut-pill-arrow">→</span>
+            </a>
+            <a href="/tools/image/resize/?mode=exact" class="shortcut-link-pill" title="Resize to exact portal pixel dimensions">
+              <span class="shortcut-pill-icon">📐</span>
+              <span>Exact Dimension Resizer</span>
+              <span class="shortcut-pill-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
       <!-- No Results State (for search filter) -->
       <div id="noResultsState" class="no-results-state hidden">
         <div class="no-results-icon">🔍</div>
@@ -616,10 +568,23 @@
   <footer class="footer">
     <div class="container footer-content">
       <div class="footer-left">
-        <p class="copyright">© 2026 Praxuni</p>
+        <div class="footer-brand">
+          <span class="footer-logo">⚡</span>
+          <span class="footer-name">Praxuni</span>
+        </div>
+        <p class="copyright">&copy; 2026 Praxuni &bull; All rights reserved.</p>
       </div>
+
+      <nav class="footer-nav" aria-label="Footer Navigation">
+        <a href="/home/" class="footer-link">Home</a>
+        <a href="/tools/" class="footer-link">All Tools</a>
+        <a href="/tools/image/compress/" class="footer-link">Compress</a>
+        <a href="/tools/image/convert/" class="footer-link">Convert</a>
+        <a href="/tools/image/resize/" class="footer-link">Resize</a>
+      </nav>
+
       <div class="footer-right">
-        <span class="footer-tag">Free &amp; Open Utilities • 100% Browser-Processed</span>
+        <span class="footer-tag">Free &bull; Fast &bull; 100% Client-Side Privacy</span>
       </div>
     </div>
   </footer>

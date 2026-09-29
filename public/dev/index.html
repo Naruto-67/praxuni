@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Praxuni Developer & System Health Portal — Edge worker status, latency monitoring, and browser capability diagnostics.">
+  <title>Developer &amp; Edge Diagnostics — Praxuni</title>
+  <link rel="canonical" href="https://praxuni.com/dev/">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+  <style>
+    .dev-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    .dev-header {
+      margin-bottom: 2rem;
+      text-align: left;
+    }
+
+    .dev-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      margin-bottom: 0.75rem;
+    }
+
+    .dev-title {
+      font-size: clamp(1.75rem, 4vw, 2.35rem);
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.025em;
+    }
+
+    .dev-subtitle {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      max-width: 680px;
+      line-height: 1.5;
+    }
+
+    .dev-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .dev-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .dev-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .dev-card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .diag-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .diag-table tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .diag-table tr:last-child {
+      border-bottom: none;
+    }
+
+    .diag-table td {
+      padding: 0.55rem 0;
+    }
+
+    .diag-label {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .diag-val {
+      text-align: right;
+      color: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+    }
+
+    .badge-diag {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-diag.ok {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34d399;
+    }
+
+    .badge-diag.warn {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #fbbf24;
+    }
+
+    .dev-payload-box {
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: #94a3b8;
+      overflow-x: auto;
+      max-height: 140px;
+      margin-bottom: 1.25rem;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .dev-action-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+      gap: 0.75rem;
+    }
+
+    .endpoint-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .endpoint-link:hover {
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+      background: rgba(56, 189, 248, 0.05);
+    }
+
+    @media (max-width: 640px) {
+      .dev-container {
+        padding: 1.25rem 1rem 3rem;
+      }
+      .dev-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container nav-content">
+      <div class="brand">
+        <a href="/home/" class="brand-link" title="Praxuni Home">
+          <span class="brand-logo">⚡</span>
+          <span class="brand-name">Praxuni</span>
+        </a>
+      </div>
+
+      <div class="header-actions">
+        <a href="/home/" class="nav-back-link" title="Return to Home">
+          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.5" fill="none" aria-hidden="true">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Home</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Developer Content -->
+  <main>
+    <div class="dev-container">
+      <div class="dev-header">
+        <span class="dev-badge">Internal Diagnostics</span>
+        <h1 class="dev-title">Developer &amp; Edge Health Portal</h1>
+        <p class="dev-subtitle">
+          Real-time edge health monitoring, latency inspection, and browser client capability verification for Praxuni.
+        </p>
+      </div>
+
+      <div class="dev-grid">
+        <!-- 1. Cloudflare Edge Worker Diagnostics -->
+        <div class="dev-card">
+          <div>
+            <div class="dev-card-header">
+              <h2 class="dev-card-title">
+                <span>⚡</span>
+                <span>Edge Worker Health</span>
+              </h2>
+              <div id="serviceStatus" class="status-badge checking" title="Worker Health Endpoint">
+                <span class="status-dot"></span>
+                <span class="status-label">Worker: Checking...</span>
+              </div>
+            </div>
+
+            <table class="diag-table" aria-label="Edge Diagnostics">
+              <tr>
+                <td class="diag-label">Endpoint</td>
+                <td class="diag-val"><a href="/api/health" target="_blank" style="color:var(--accent-primary);">/api/health</a></td>
+              </tr>
+              <tr>
+                <td class="diag-label">Round-Trip Latency</td>
+                <td class="diag-val" id="latencyVal">Measuring...</td>
+              </tr>
+              <tr>
+                <td class="diag-label">HTTP Status</td>
+                <td class="diag-val" id="httpStatusVal">Pending</td>
+              </tr>
+              <tr>
+                <td class="diag-label">Runtime Environment</td>
+                <td class="diag-val">Cloudflare Edge</td>
+              </tr>
+              <tr>
+                <td class="diag-label">Last Checked</td>
+                <td class="diag-val" id="lastCheckedVal">—</td>
+              </tr>
+            </table>
+
+            <div class="dev-payload-box" id="payloadBox">Waiting for ping...</div>
+          </div>
+
+          <div class="dev-action-row">
+            <button type="button" id="pingBtn" class="btn btn-primary btn-sm">Ping Worker Now</button>
+          </div>
+        </div>
+
+        <!-- 2. Client Device & Orientation Diagnostics -->
+        <div class="dev-card">
+          <div>
+            <div class="dev-card-header">
+              <h2 class="dev-card-title">
+                <span>📱</span>
+                <span>Client &amp; Screen Diagnostics</span>
+              </h2>
+              <span class="badge-diag ok" id="deviceTypeBadge">Responsive</span>
+            </div>
+
+            <table class="diag-table" aria-label="Client Diagnostics">
+              <tr>
+                <td class="diag-label">Viewport Size</td>
+                <td class="diag-val" id="viewportVal">—</td>
+              </tr>
+              <tr>
+                <td class="diag-label">Screen Resolution</td>
+                <td class="diag-val" id="screenVal">—</td>
+              </tr>
+              <tr>
+                <td class="diag-label">Orientation</td>
+                <td class="diag-val" id="orientationVal">—</td>
+              </tr>
+              <tr>
+                <td class="diag-label">Device Pixel Ratio</td>
+                <td class="diag-val" id="dprVal">—</td>
+              </tr>
+              <tr>
+                <td class="diag-label">Max Touch Points</td>
+                <td class="diag-val" id="touchVal">—</td>
+              </tr>
+              <tr>
+                <td class="diag-label">Color Scheme</td>
+                <td class="diag-val" id="themeVal">—</td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="dev-action-row">
+            <span style="font-size:0.75rem; color:var(--text-muted);">Updates dynamically on resize &amp; rotate</span>
+          </div>
+        </div>
+
+        <!-- 3. Browser Media Capabilities -->
+        <div class="dev-card">
+          <div>
+            <div class="dev-card-header">
+              <h2 class="dev-card-title">
+                <span>🛠️</span>
+                <span>Browser Engine Capabilities</span>
+              </h2>
+              <span class="badge-diag ok">100% Client-Side</span>
+            </div>
+
+            <table class="diag-table" aria-label="Engine Capabilities">
+              <tr>
+                <td class="diag-label">HTML5 Canvas 2D</td>
+                <td class="diag-val" id="capCanvas">Testing...</td>
+              </tr>
+              <tr>
+                <td class="diag-label">WebAssembly (Wasm)</td>
+                <td class="diag-val" id="capWasm">Testing...</td>
+              </tr>
+              <tr>
+                <td class="diag-label">Web Workers</td>
+                <td class="diag-val" id="capWorkers">Testing...</td>
+              </tr>
+              <tr>
+                <td class="diag-label">OffscreenCanvas</td>
+                <td class="diag-val" id="capOffscreen">Testing...</td>
+              </tr>
+              <tr>
+                <td class="diag-label">WebP Decode &amp; Export</td>
+                <td class="diag-val" id="capWebp">Testing...</td>
+              </tr>
+              <tr>
+                <td class="diag-label">AVIF Support</td>
+                <td class="diag-val" id="capAvif">Testing...</td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="dev-action-row">
+            <button type="button" id="recheckCapsBtn" class="btn btn-secondary btn-sm">Re-verify Engine</button>
+          </div>
+        </div>
+
+        <!-- 4. Quick Routing Links -->
+        <div class="dev-card">
+          <div>
+            <div class="dev-card-header">
+              <h2 class="dev-card-title">
+                <span>🔗</span>
+                <span>System Endpoints &amp; Tools</span>
+              </h2>
+              <span class="badge-diag ok">Live Routes</span>
+            </div>
+
+            <div class="links-grid">
+              <a href="/home/" class="endpoint-link">
+                <span>Homepage</span>
+                <span>&rarr;</span>
+              </a>
+              <a href="/tools/" class="endpoint-link">
+                <span>All Tools Directory</span>
+                <span>&rarr;</span>
+              </a>
+              <a href="/tools/image/" class="endpoint-link">
+                <span>Image Tools Hub</span>
+                <span>&rarr;</span>
+              </a>
+              <a href="/tools/image/compress/" class="endpoint-link">
+                <span>Image Compressor</span>
+                <span>&rarr;</span>
+              </a>
+              <a href="/tools/image/convert/" class="endpoint-link">
+                <span>Image Converter</span>
+                <span>&rarr;</span>
+              </a>
+              <a href="/tools/image/resize/" class="endpoint-link">
+                <span>Image Resizer</span>
+                <span>&rarr;</span>
+              </a>
+              <a href="/api/health" target="_blank" class="endpoint-link">
+                <span>API Health Endpoint</span>
+                <span>↗</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-left">
+        <div class="footer-brand">
+          <span class="footer-logo">⚡</span>
+          <span class="footer-name">Praxuni</span>
+        </div>
+        <p class="copyright">&copy; 2026 Praxuni &bull; All rights reserved.</p>
+      </div>
+
+      <nav class="footer-nav" aria-label="Footer Navigation">
+        <a href="/home/" class="footer-link">Home</a>
+        <a href="/tools/" class="footer-link">All Tools</a>
+        <a href="/tools/image/" class="footer-link">Image Hub</a>
+        <a href="/tools/image/compress/" class="footer-link">Compress</a>
+        <a href="/tools/image/convert/" class="footer-link">Convert</a>
+        <a href="/tools/image/resize/" class="footer-link">Resize</a>
+      </nav>
+
+      <div class="footer-right">
+        <span class="footer-tag">Free &bull; Fast &bull; 100% Client-Side Privacy</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/app.js"></script>
+  <script>
+    // Live Diagnostics Runner
+    async function pingWorker() {
+      const latencyEl = document.getElementById('latencyVal');
+      const httpEl = document.getElementById('httpStatusVal');
+      const payloadEl = document.getElementById('payloadBox');
+      const lastCheckedEl = document.getElementById('lastCheckedVal');
+      const pingBtn = document.getElementById('pingBtn');
+
+      if (pingBtn) pingBtn.disabled = true;
+      latencyEl.textContent = 'Pinging...';
+
+      const t0 = performance.now();
+      try {
+        const res = await fetch('/api/health?t=' + Date.now());
+        const t1 = performance.now();
+        const rtt = Math.round(t1 - t0);
+
+        httpEl.textContent = `${res.status} ${res.statusText}`;
+        httpEl.style.color = res.ok ? '#34d399' : '#ef4444';
+        latencyEl.textContent = `${rtt} ms`;
+        latencyEl.style.color = rtt < 150 ? '#34d399' : (rtt < 400 ? '#fbbf24' : '#ef4444');
+
+        const json = await res.json();
+        payloadEl.textContent = JSON.stringify(json, null, 2);
+        lastCheckedEl.textContent = new Date().toLocaleTimeString();
+      } catch (err) {
+        httpEl.textContent = 'Failed';
+        httpEl.style.color = '#ef4444';
+        latencyEl.textContent = 'Timeout / Error';
+        latencyEl.style.color = '#ef4444';
+        payloadEl.textContent = String(err);
+        lastCheckedEl.textContent = new Date().toLocaleTimeString();
+      } finally {
+        if (pingBtn) pingBtn.disabled = false;
+      }
+    }
+
+    function updateClientDiagnostics() {
+      const vpEl = document.getElementById('viewportVal');
+      const scEl = document.getElementById('screenVal');
+      const oriEl = document.getElementById('orientationVal');
+      const dprEl = document.getElementById('dprVal');
+      const touchEl = document.getElementById('touchVal');
+      const themeEl = document.getElementById('themeVal');
+      const badgeEl = document.getElementById('deviceTypeBadge');
+
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      vpEl.textContent = `${w} × ${h} px`;
+      scEl.textContent = `${screen.width} × ${screen.height} px`;
+
+      const isPortrait = window.matchMedia('(orientation: portrait)').matches;
+      const oriType = (screen.orientation && screen.orientation.type) || (isPortrait ? 'portrait' : 'landscape');
+      oriEl.textContent = oriType;
+
+      dprEl.textContent = `${window.devicePixelRatio || 1}x`;
+      touchEl.textContent = `${navigator.maxTouchPoints || 0} touch points`;
+
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      themeEl.textContent = isDark ? 'Dark (preferred)' : 'Light (preferred)';
+
+      if (badgeEl) {
+        if (w <= 480) {
+          badgeEl.textContent = 'Compact Mobile';
+        } else if (w <= 768) {
+          badgeEl.textContent = 'Mobile / Tablet';
+        } else if (w <= 1024) {
+          badgeEl.textContent = 'Tablet / Laptop';
+        } else {
+          badgeEl.textContent = 'Desktop';
+        }
+      }
+    }
+
+    function testCapabilities() {
+      // 1. Canvas 2D
+      const capCanvas = document.getElementById('capCanvas');
+      try {
+        const cvs = document.createElement('canvas');
+        const ctx = cvs.getContext('2d');
+        capCanvas.textContent = ctx ? 'Supported ✓' : 'Unsupported ✗';
+        capCanvas.style.color = ctx ? '#34d399' : '#ef4444';
+      } catch (e) {
+        capCanvas.textContent = 'Unsupported';
+        capCanvas.style.color = '#ef4444';
+      }
+
+      // 2. WebAssembly
+      const capWasm = document.getElementById('capWasm');
+      const hasWasm = typeof WebAssembly === 'object' && typeof WebAssembly.instantiate === 'function';
+      capWasm.textContent = hasWasm ? 'Supported ✓' : 'Unsupported ✗';
+      capWasm.style.color = hasWasm ? '#34d399' : '#ef4444';
+
+      // 3. Web Workers
+      const capWorkers = document.getElementById('capWorkers');
+      const hasWorkers = typeof Worker !== 'undefined';
+      capWorkers.textContent = hasWorkers ? 'Supported ✓' : 'Unsupported ✗';
+      capWorkers.style.color = hasWorkers ? '#34d399' : '#ef4444';
+
+      // 4. OffscreenCanvas
+      const capOffscreen = document.getElementById('capOffscreen');
+      const hasOffscreen = typeof OffscreenCanvas !== 'undefined';
+      capOffscreen.textContent = hasOffscreen ? 'Supported ✓' : 'Partial ⚠️';
+      capOffscreen.style.color = hasOffscreen ? '#34d399' : '#fbbf24';
+
+      // 5. WebP
+      const capWebp = document.getElementById('capWebp');
+      try {
+        const cvs = document.createElement('canvas');
+        const webpData = cvs.toDataURL('image/webp');
+        const hasWebp = webpData.startsWith('data:image/webp');
+        capWebp.textContent = hasWebp ? 'Supported ✓' : 'Decode Only';
+        capWebp.style.color = hasWebp ? '#34d399' : '#fbbf24';
+      } catch (e) {
+        capWebp.textContent = 'Unsupported';
+        capWebp.style.color = '#ef4444';
+      }
+
+      // 6. AVIF Decode Support
+      const capAvif = document.getElementById('capAvif');
+      const avifImg = new Image();
+      avifImg.onload = () => {
+        capAvif.textContent = 'Supported ✓';
+        capAvif.style.color = '#34d399';
+      };
+      avifImg.onerror = () => {
+        capAvif.textContent = 'Unsupported ✗';
+        capAvif.style.color = '#ef4444';
+      };
+      avifImg.src = 'data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADybWV0YQAAAAAAAAAoaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAGxpYmF2aWYAAAAADnBpdG0AAAAAAAEAAAAeaWxvYwAAAABEAAABAAEAAAABAAABGgAAAB0AAAAoaWluZgAAAAAAAQAAABppbmZlAgAAAAABAABhdjAxQ29sb3IAAAAAamlwcnAAAABLaXBjbwAAABRpc3BlAAAAAAAAAAIAAAACAAAAEHBpeGkAAAAAAwgICAAAAAxhdjFDgQ0MAAAAABNjb2xybmNseAACAAIAAYAAAAAXaXBtYQAAAAAAAAABAAEEAQKDBAAAACVtZGF0EgAKCBgANogQEAwgMg8f8D///8WfhwB8+ErK42A=';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      pingWorker();
+      updateClientDiagnostics();
+      testCapabilities();
+
+      const pingBtn = document.getElementById('pingBtn');
+      if (pingBtn) pingBtn.addEventListener('click', pingWorker);
+
+      const recheckBtn = document.getElementById('recheckCapsBtn');
+      if (recheckBtn) recheckBtn.addEventListener('click', testCapabilities);
+
+      window.addEventListener('resize', updateClientDiagnostics);
+      if (screen.orientation) {
+        screen.orientation.addEventListener('change', updateClientDiagnostics);
+      }
+    });
+  </script>
+</body>
+</html>
+
